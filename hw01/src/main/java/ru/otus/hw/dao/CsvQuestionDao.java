@@ -20,10 +20,7 @@ public class CsvQuestionDao implements QuestionDao {
     private InputStream getResourceAsStream(String fileName) {
         InputStream stream = getClass().getClassLoader().getResourceAsStream(fileName);
         if (stream == null) {
-            throw new QuestionReadException(
-                    String.format("Required resource '%s' not found in classpath. " +
-                                    "Current classpath: %s", fileName, System.getProperty("java.class.path"))
-            );
+            throw new QuestionReadException("Required resource '%s' not found in classpath. ".formatted(fileName));
         }
         return stream;
     }
