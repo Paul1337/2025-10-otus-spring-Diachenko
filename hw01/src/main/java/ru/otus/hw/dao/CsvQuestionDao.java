@@ -29,10 +29,11 @@ public class CsvQuestionDao implements QuestionDao {
     public List<Question> findAll() {
         String fileName = fileNameProvider.getTestFileName();
         try (InputStream testFileInputStream = getResourceAsStream(fileName);
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(testFileInputStream));
+             InputStreamReader inputStreamReader = new InputStreamReader(testFileInputStream);
+             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             ) {
-            var csvToQuestionDtoReader = new CsvToBeanBuilder<QuestionDto>(bufferedReader);
-            List<QuestionDto> questionDtos = csvToQuestionDtoReader.withType(QuestionDto.class)
+            var csvToQuestionDtoBuilder = new CsvToBeanBuilder<QuestionDto>(bufferedReader);
+            var questionDtos = csvToQuestionDtoBuilder.withType(QuestionDto.class)
                                     .withSkipLines(1).withSeparator(';').build().parse();
             return questionDtos.stream().map(QuestionDto::toDomainObject).toList();
         } catch (IOException e) {

@@ -13,6 +13,8 @@ public class TestServiceImpl implements TestService {
 
     private final QuestionDao questionDao;
 
+    private final QuestionToStringConverter questionToStringConverter;
+
     @Override
     public void executeTest() {
         ioService.printLine("");
@@ -21,12 +23,8 @@ public class TestServiceImpl implements TestService {
         List<Question> questions = questionDao.findAll();
 
         questions.forEach(question -> {
-            ioService.printLine(question.text());
-            question.answers().forEach(answer -> {
-                ioService.printFormattedLine("- %s", answer.text());
-            });
-            ioService.printLine("");
+            var questionAsString = questionToStringConverter.convert(question);
+            ioService.printLine(questionAsString);
         });
     }
-
 }
