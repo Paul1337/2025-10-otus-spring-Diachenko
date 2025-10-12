@@ -5,19 +5,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import ru.otus.hw.dao.QuestionDao;
-import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 import ru.otus.hw.service.IOService;
 import ru.otus.hw.service.QuestionToStringConverter;
-import ru.otus.hw.service.TestService;
 import ru.otus.hw.service.TestServiceImpl;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.never;
 
 public class TestServiceImplTest {
     @Mock
@@ -45,12 +47,8 @@ public class TestServiceImplTest {
     }
 
     @Test
-    void executeTest_When3Questions_ShouldPrintAllQuestions() {
-        List<Question> questions = List.of(
-                mock(Question.class),
-                mock(Question.class),
-                mock(Question.class)
-        );
+    void executeTestWhen3QuestionsShouldPrintAllQuestions() {
+        List<Question> questions = List.of(mock(Question.class), mock(Question.class), mock(Question.class));
 
         when(questionDao.findAll()).thenReturn(questions);
         when(questionToStringConverter.convert(any(Question.class)))
@@ -73,7 +71,7 @@ public class TestServiceImplTest {
     }
 
     @Test
-    void executeTest_WhenNoQuestions_ShouldPrintOnlyHeaders() {
+    void executeTestWhenNoQuestionsShouldPrintOnlyHeaders() {
         List<Question> questions = List.of();
 
         when(questionDao.findAll()).thenReturn(questions);
