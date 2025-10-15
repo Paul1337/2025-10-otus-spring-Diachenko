@@ -48,7 +48,7 @@ public class TestServiceImplTest {
 
     @Test
     void executeTestWhen3QuestionsShouldPrintAllQuestions() {
-        List<Question> questions = List.of(mock(Question.class), mock(Question.class), mock(Question.class));
+        List<Question> questions = List.of(new Question("text", List.of()), new Question("text", List.of()), new Question("text", List.of()));
 
         when(questionDao.findAll()).thenReturn(questions);
         when(questionToStringConverter.convert(any(Question.class)))
@@ -68,6 +68,16 @@ public class TestServiceImplTest {
         verify(ioService).printLine("Formatted Question 3");
 
         verifyNoMoreInteractions(ioService, questionDao, questionToStringConverter);
+
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
+        System.out.println("123");
     }
 
     @Test
