@@ -68,16 +68,6 @@ public class TestServiceImplTest {
         verify(ioService).printLine("Formatted Question 3");
 
         verifyNoMoreInteractions(ioService, questionDao, questionToStringConverter);
-
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
-        System.out.println("123");
     }
 
     @Test
