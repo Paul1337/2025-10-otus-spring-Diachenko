@@ -33,9 +33,9 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        var book = jdbcNamedParams.query("select book.id, book.title, book.author_id," +
-                "author.full_name as author_full_name, genre.id as genre_id, genre.name as genre_name from books book" +
-                "left join books_genres bg on bg.book_id = book.id left join genres genre on genre.id = bg.genre_id" +
+        var book = jdbcNamedParams.query("select book.id, book.title, book.author_id, " +
+                "author.full_name as author_full_name, genre.id as genre_id, genre.name as genre_name from books book " +
+                "left join books_genres bg on bg.book_id = book.id left join genres genre on genre.id = bg.genre_id " +
                 "left join authors author on author.id = book.author_id  where book.id = :id",
                 Map.of("id", id), new BookResultSetExtractor());
         return Optional.ofNullable(book);
@@ -64,7 +64,7 @@ public class JdbcBookRepository implements BookRepository {
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        return jdbc.query("select book.id, book.title, book.author_id, author.full_name as author_full_name" +
+        return jdbc.query("select book.id, book.title, book.author_id, author.full_name as author_full_name " +
                 "from books book left join authors author on author.id = author_id", new BookRowMapper());
     }
 
