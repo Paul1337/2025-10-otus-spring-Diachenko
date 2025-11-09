@@ -13,11 +13,12 @@ import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -26,13 +27,17 @@ public class JdbcBookRepository implements BookRepository {
 
     private final GenreRepository genreRepository;
 
-    private final NamedParameterJdbcOperations namedParameterJdbcOperations;
+    private final NamedParameterJdbcOperations jdbcNamedParams;
 
-    private final JdbcOperations jdbcOperations;
+    private final JdbcOperations jdbc;
 
     @Override
     public Optional<Book> findById(long id) {
-        var book = namedParameterJdbcOperations.query("select book.id, book.title, book.author_id, author.full_name as author_full_name, genre.id as genre_id, genre.name as genre_name from books book left join books_genres bg on bg.book_id = book.id left join genres genre on genre.id = bg.genre_id left join authors author on author.id = book.author_id  where book.id = :id", Map.of("id", id), new BookResultSetExtractor());
+        var book = jdbcNamedParams.query("select book.id, book.title, book.author_id," +
+                "author.full_name as author_full_name, genre.id as genre_id, genre.name as genre_name from books book" +
+                "left join books_genres bg on bg.book_id = book.id left join genres genre on genre.id = bg.genre_id" +
+                "left join authors author on author.id = book.author_id  where book.id = :id",
+                Map.of("id", id), new BookResultSetExtractor());
         return Optional.ofNullable(book);
     }
 
@@ -55,15 +60,16 @@ public class JdbcBookRepository implements BookRepository {
 
     @Override
     public void deleteById(long id) {
-        namedParameterJdbcOperations.update("delete from books where id = :id", Map.of("id", id));
+        jdbcNamedParams.update("delete from books where id = :id", Map.of("id", id));
     }
 
     private List<Book> getAllBooksWithoutGenres() {
-        return jdbcOperations.query("select book.id, book.title, book.author_id, author.full_name as author_full_name from books book left join authors author on author.id = author_id", new BookRowMapper());
+        return jdbc.query("select book.id, book.title, book.author_id, author.full_name as author_full_name" +
+                "from books book left join authors author on author.id = author_id", new BookRowMapper());
     }
 
     private List<BookGenreRelation> getAllGenreRelations() {
-        return jdbcOperations.query("select book_id, genre_id from books_genres", new BookGenreRelationRowMapper());
+        return jdbc.query("select book_id, genre_id from books_genres", new BookGenreRelationRowMapper());
     }
 
     private void mergeBooksInfo(List<Book> booksWithoutGenres, List<Genre> genres,
@@ -72,7 +78,7 @@ public class JdbcBookRepository implements BookRepository {
 
         Map<Long, List<Genre>> genresByBookId = relations.stream().collect(Collectors.toMap(
                 BookGenreRelation::bookId,
-                (relation) -> new ArrayList<>(List.of( genreById.get(relation.genreId()) )),
+                (relation) -> new ArrayList<>(List.of(genreById.get(relation.genreId()))),
                 (existingList, newList) -> {
                     existingList.addAll(newList);
                     return existingList;
@@ -91,7 +97,8 @@ public class JdbcBookRepository implements BookRepository {
         params.addValue("title", book.getTitle());
         params.addValue("author_id", book.getAuthor().getId());
 
-        namedParameterJdbcOperations.update("insert into books (title, author_id) values (:title, :author_id)", params, keyHolder, new String[] { "id" });
+        jdbcNamedParams.update("insert into books (title, author_id) values (:title, :author_id)",
+                params, keyHolder, new String[] { "id" });
 
         //noinspection DataFlowIssue
         book.setId(keyHolder.getKeyAs(Long.class));
@@ -103,7 +110,9 @@ public class JdbcBookRepository implements BookRepository {
         var params = Map.of("title", book.getTitle(),
                             "author_id", book.getAuthor().getId(),
                             "id", book.getId());
-        int rowsAffected = namedParameterJdbcOperations.update("update books set title = :title, author_id = :author_id where id = :id", params);
+        int rowsAffected = jdbcNamedParams.update(
+                "update books set title = :title, author_id = :author_id where id = :id", params
+        );
 
         if (rowsAffected == 0) {
             throw new EntityNotFoundException("Book with id %s does not exist".formatted(book.getId()));
@@ -122,18 +131,19 @@ public class JdbcBookRepository implements BookRepository {
                         .addValue("genre_id", genre.getId()))
                 .toArray(MapSqlParameterSource[]::new);
 
-        namedParameterJdbcOperations.batchUpdate("insert into books_genres (book_id, genre_id) values (:book_id, :genre_id)", params);
+        jdbcNamedParams.batchUpdate("insert into books_genres (book_id, genre_id) values (:book_id, :genre_id)", params);
     }
 
     private void removeGenresRelationsFor(Book book) {
-        namedParameterJdbcOperations.update("delete from books_genres where book_id = :book_id", Map.of("book_id", book.getId()));
+        jdbcNamedParams.update("delete from books_genres where book_id = :book_id", Map.of("book_id", book.getId()));
     }
 
     private static class BookRowMapper implements RowMapper<Book> {
 
         @Override
         public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Book(rs.getLong("id"), rs.getString("title"), new Author(rs.getLong("author_id"), rs.getString("author_full_name")), List.of());
+            return new Book(rs.getLong("id"), rs.getString("title"),
+                    new Author(rs.getLong("author_id"), rs.getString("author_full_name")), List.of());
         }
     }
 
