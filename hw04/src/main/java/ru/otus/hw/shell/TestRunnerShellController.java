@@ -2,7 +2,6 @@ package ru.otus.hw.shell;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.Availability;
-import org.springframework.shell.command.annotation.CommandAvailability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
