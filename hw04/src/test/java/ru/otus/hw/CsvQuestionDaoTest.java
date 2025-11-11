@@ -17,7 +17,7 @@ import ru.otus.hw.exceptions.QuestionReadException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(classes = { CsvQuestionDao.class })
 public class CsvQuestionDaoTest {
     @MockitoBean
     private AppProperties testAppProperties;
