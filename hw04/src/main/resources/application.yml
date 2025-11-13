@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: quiz-app
+  messages:
+    baseName: messages
+    encoding: UTF-8
+    fallbackToSystemLocale: false
+  shell:
+    script:
+      enabled: true
+    interactive:
+      enabled: true
+    command:
+      exit:
+        enabled: true
+test:
+  rightAnswersCountToPass: 3
+  locale: en-US
+  fileNameByLocaleTag:
+    ru-RU: questions_ru.csv
+    en-US: questions.csv
