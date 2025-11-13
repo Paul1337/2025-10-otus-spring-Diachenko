@@ -1,0 +1,9 @@
+# Добавить сюда своих вопросов. Эту строку надо пропустить при настройке CsvToBean (withSkipLines)
+Есть ли жизнь на Марсе?;Наука пока не знает ответа на этот вопрос%true|Конечно. Красный НЛО с Марса. А зелёный с Венеры%false|Абсолютно нет%false
+Как следует загружать ресурсы из jar в Java?;ClassLoader#getResourceAsStream или ClassPathResource#getInputStream%true|ClassLoader#getResource#getFile + FileReader%false|Вингардиум Левиоса%false
+Какой вариант является хорошим способом обработки исключения?;@SneakyThrow%false|e.printStackTrace()%false|Повторное выбрасывание с обёрткой в бизнес-исключение (например, QuestionReadException)%true|Игнорирование исключения%false
+Какая столица Австралии?;Сидней%false|Канберра%true|Мельбурн%false
+Какая структура данных использует принцип LIFO (Last In, First Out)?;Очередь%false|Стек%true|Массив%false|Связный список%false
+Что означает аббревиатура SQL?;Structured Query Language (язык структурированных запросов)%true|Simple Question Language (простой язык вопросов)%false|Standard Query Logic (стандартная логика запросов)%false
+Какой язык программирования был создан Джеймсом Гослингом в Sun Microsystems?;Python%false|Java%true|C++%false|JavaScript%false
+Что такое инкапсуляция в объектно-ориентированном программировании?;Объединение данных с методами, которые работают с этими данными%true|Создание нескольких методов с одинаковым именем%false|Наследование свойств от родительского класса%false|Полное сокрытие деталей реализации%false
