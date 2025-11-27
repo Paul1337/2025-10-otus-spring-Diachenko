@@ -1,5 +1,6 @@
 package ru.otus.hw.hw06.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +27,7 @@ public class Comment {
     @Column
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
     @JoinColumn(name = "book_id")
     private Book book;
 }

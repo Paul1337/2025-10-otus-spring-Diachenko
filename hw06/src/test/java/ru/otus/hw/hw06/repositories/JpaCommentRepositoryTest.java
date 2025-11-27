@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
+import ru.otus.hw.hw06.models.Book;
 import ru.otus.hw.hw06.models.Comment;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.shouldHaveThrown;
 
 @DisplayName("репозиторий на основе jpa для работы с комментариями")
 @DataJpaTest
@@ -18,6 +20,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JpaCommentRepositoryTest {
     @Autowired
     private TestEntityManager em;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private JpaCommentRepository repository;
@@ -51,6 +56,50 @@ public class JpaCommentRepositoryTest {
                         !comment.getText().isBlank());
     }
 
+    @DisplayName("должен сохранять новый комментарий")
+    @Test
+    void shouldSaveNewComment() {
+        var book = em.find(Book.class, 1L);
+        assertThat(book).isNotNull();
+        var expectedComment = new Comment(0, "TestComment", book);
+        var returnedComment = repository.save(expectedComment);
 
+        assertThat(returnedComment).isNotNull()
+                .matches(comment -> comment.getId() > 0)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedComment);
+
+        em.flush();
+        em.clear();
+
+        var actualComment = repository.findById(returnedComment.getId());
+
+        assertThat(actualComment).isPresent();
+        assertThat(actualComment.get().getId()).isEqualTo(expectedComment.getId());
+        assertThat(actualComment.get().getText()).isEqualTo(expectedComment.getText());
+    }
+
+    @DisplayName("должен сохранять обновлённый комментарий")
+    @Test
+    void shouldSaveUpdatedComment() {
+        var book = em.find(Book.class, 1L);
+        assertThat(book).isNotNull();
+        var expectedComment = new Comment(1, "TestComment", book);
+        var returnedComment = repository.save(expectedComment);
+
+        assertThat(returnedComment).isNotNull()
+                .matches(comment -> comment.getId() > 0)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedComment);
+
+        em.flush();
+        em.clear();
+
+        var actualComment = repository.findById(returnedComment.getId());
+
+        assertThat(actualComment).isPresent();
+        assertThat(actualComment.get().getId()).isEqualTo(expectedComment.getId());
+        assertThat(actualComment.get().getText()).isEqualTo(expectedComment.getText());
+    }
 
 }
