@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -28,16 +29,19 @@ import java.util.List;
 @Getter
 @Table(name = "books")
 @NamedEntityGraph(name = "book-with-author", attributeNodes = { @NamedAttributeNode("author") })
+@NamedEntityGraph(name = "book-with-author-genres", attributeNodes = { @NamedAttributeNode("author"), @NamedAttributeNode("genres") })
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column
+    @Setter
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
     @JoinColumn(name = "author_id")
+    @Setter
     private Author author;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE })
@@ -45,5 +49,6 @@ public class Book {
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     @Fetch(FetchMode.SUBSELECT)
+    @Setter
     private List<Genre> genres;
 }

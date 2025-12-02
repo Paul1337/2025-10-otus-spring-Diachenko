@@ -29,10 +29,19 @@ public class CommentCommands {
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
-    @ShellMethod(value = "Insert comment for book", key = "cins")
-    public String insertCommentForBookId(String text, long bookId) {
-        var commentDto = commentService.insert(text, bookId);
+    @ShellMethod(value = "Create comment for book", key = "cins")
+    public String createCommentForBookId(String text, long bookId) {
+        var commentDto = commentService.create(text, bookId);
         return commentConverter.commentDtoToString(commentDto);
+    }
 
+    @ShellMethod(value = "Update comment by id", key = "cupd")
+    public void updateCommentById(long commentId, String text) {
+        commentService.update(commentId, text);
+    }
+
+    @ShellMethod(value = "Delete comment by id", key = "cdel")
+    public void deleteCommentById(long commentId) {
+        commentService.deleteById(commentId);
     }
 }

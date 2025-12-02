@@ -20,9 +20,9 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        var authorEntityGraph = entityManager.getEntityGraph("book-with-author");
+        var withAuthorAndGenresEntityGraph = entityManager.getEntityGraph("book-with-author-genres");
         Map<String, Object> properties = new HashMap<>();
-        properties.put(EntityGraph.EntityGraphType.FETCH.getKey(), authorEntityGraph);
+        properties.put(EntityGraph.EntityGraphType.FETCH.getKey(), withAuthorAndGenresEntityGraph);
         var book = entityManager.find(Book.class, id, properties);
         return Optional.ofNullable(book);
     }
@@ -38,23 +38,16 @@ public class JpaBookRepository implements BookRepository {
     @Override
     public Book save(Book book) {
         if (book.getId() == 0) {
-            return insert(book);
+            entityManager.persist(book);
+            return book;
         }
-        return update(book);
+        return entityManager.merge(book);
     }
 
     @Override
     public void deleteById(long id) {
         var book = entityManager.find(Book.class, id);
+        if (book == null) return;
         entityManager.remove(book);
-    }
-
-    private Book insert(Book book) {
-        entityManager.persist(book);
-        return book;
-    }
-
-    private Book update(Book book) {
-        return entityManager.merge(book);
     }
 }

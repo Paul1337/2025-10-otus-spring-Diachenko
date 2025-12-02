@@ -14,8 +14,6 @@ public class BookConverter {
 
     private final GenreConverter genreConverter;
 
-    private final CommentConverter commentConverter;
-
     public String bookDtoToString(BookDto bookDto) {
         var genresString = bookDto.getGenreDtos().stream()
                 .map(genreConverter::genreDtoToString)
@@ -27,12 +25,5 @@ public class BookConverter {
                 bookDto.getTitle(),
                 authorConverter.authorDtoToString(bookDto.getAuthorDto()),
                 genresString);
-    }
-
-    public BookDto bookToDto(Book book) {
-        return new BookDto(book.getId(), book.getTitle(),
-                authorConverter.authorToDto(book.getAuthor()),
-                book.getGenres().stream().map(genreConverter::genreToDto).collect(Collectors.toList())
-        );
     }
 }

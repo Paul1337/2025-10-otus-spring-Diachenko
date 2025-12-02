@@ -30,18 +30,16 @@ public class JpaCommentRepository implements CommentRepository {
     @Override
     public Comment save(Comment comment) {
         if (comment.getId() == 0) {
-            return insert(comment);
+            entityManager.persist(comment);
+            return comment;
         }
-        return update(comment);
-    }
-
-    private Comment insert(Comment comment) {
-        entityManager.persist(comment);
-        return comment;
-    }
-
-    private Comment update(Comment comment) {
         return entityManager.merge(comment);
     }
 
+    @Override
+    public void deleteById(long commentId) {
+        var comment = entityManager.find(Comment.class, commentId);
+        if (comment == null) return;
+        entityManager.remove(comment);
+    }
 }

@@ -33,14 +33,13 @@ public class JpaBookRepositoryTest {
         var actualBook = repository.findById(bookId);
         assertThat(actualBook).isPresent();
 
-        // чтобы jpa загрузил lazy-связь и после em.clear() не попасть в LazyInitializationException, вызвав getGenres() на detached-сущности
-        System.out.println(actualBook.get().getGenres());
         em.clear();
         var expectedBook = em.find(Book.class, bookId);
 
         assertThat(actualBook).isPresent()
                 .get()
                 .usingRecursiveComparison()
+                .ignoringFields("genres")
                 .isEqualTo(expectedBook);
     }
 

@@ -9,8 +9,4 @@ public class CommentConverter {
     public String commentDtoToString(CommentDto commentDto) {
         return "Id: %d, Text: %s".formatted(commentDto.getId(), commentDto.getText());
     }
-
-    public CommentDto commentToDto(Comment comment) {
-        return new CommentDto(comment.getId(), comment.getText());
-    }
 }

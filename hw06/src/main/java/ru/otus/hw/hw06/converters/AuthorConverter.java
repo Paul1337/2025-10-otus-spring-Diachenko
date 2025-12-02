@@ -9,8 +9,4 @@ public class AuthorConverter {
     public String authorDtoToString(AuthorDto authorDto) {
         return "Id: %d, FullName: %s".formatted(authorDto.getId(), authorDto.getFullName());
     }
-
-    public AuthorDto authorToDto(Author author) {
-        return new AuthorDto(author.getId(), author.getFullName());
-    }
 }

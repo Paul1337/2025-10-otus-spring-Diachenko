@@ -1,40 +1,72 @@
 package ru.otus.hw.hw06.services;
 
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import ru.otus.hw.hw06.converters.AuthorConverter;
 import ru.otus.hw.hw06.converters.BookConverter;
+import ru.otus.hw.hw06.converters.CommentConverter;
+import ru.otus.hw.hw06.converters.GenreConverter;
+import ru.otus.hw.hw06.mappers.AuthorMapper;
+import ru.otus.hw.hw06.mappers.BookMapper;
+import ru.otus.hw.hw06.mappers.GenreMapper;
+import ru.otus.hw.hw06.models.Book;
+import ru.otus.hw.hw06.repositories.AuthorRepository;
+import ru.otus.hw.hw06.repositories.BookRepository;
+import ru.otus.hw.hw06.repositories.GenreRepository;
+import ru.otus.hw.hw06.repositories.JpaAuthorRepository;
+import ru.otus.hw.hw06.repositories.JpaBookRepository;
+import ru.otus.hw.hw06.repositories.JpaCommentRepository;
+import ru.otus.hw.hw06.repositories.JpaGenreRepository;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-@SpringBootTest
-//@DataJpaTest
-//@Import({ CommentServiceImpl.class, CommentConverter.class, JpaCommentRepository.class, JpaBookRepository.class})
-//@Transactional(propagation = Propagation.NEVER)
-public class BookServiceTest {
-
+@DataJpaTest
+@Import({ BookServiceImpl.class, BookConverter.class, JpaAuthorRepository.class, JpaGenreRepository.class, JpaBookRepository.class, BookConverter.class, AuthorConverter.class, GenreConverter.class, BookMapper.class, AuthorMapper.class, GenreMapper.class})
+@Transactional(propagation = Propagation.NEVER)
+public class BookServiceImplTest {
     @Autowired
     private BookServiceImpl bookService;
 
     @Autowired
     private BookConverter bookConverter;
 
-    @DisplayName("получение книги по id: не должен выбросить LazyInitializationException при конвертации dto в строку")
+    @Autowired
+    private TestEntityManager em;
+
+    @Autowired
+    private BookMapper bookMapper;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @DisplayName("должен корректно загружать книгу по id")
     @Test
     void shouldNotThrowWhenFindByIdAndConvertingDtoToString() {
         var bookDto = bookService.findById(1L);
         assertThat(bookDto).isPresent();
 
-        assertThatNoException()
-                .isThrownBy(() -> {
-                    String dtoAsString = bookConverter.bookDtoToString(bookDto.get());
-                    System.out.println(dtoAsString);
-                });
+        var expectedBook = bookRepository.findById(1L);
+        var expectedBookDto = bookMapper.bookToDto(expectedBook.orElseThrow());
+
+        assertThat(bookDto.get())
+                .usingRecursiveComparison()
+                .isEqualTo(expectedBookDto);
+
+        var dtoAsString = bookConverter.bookDtoToString(bookDto.get());
+        System.out.println(dtoAsString);
     }
 
     @DisplayName("получение списка книг: не должен выбросить LazyInitializationException при конвертации dto в строку")
