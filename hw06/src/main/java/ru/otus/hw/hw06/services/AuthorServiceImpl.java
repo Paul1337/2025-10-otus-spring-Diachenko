@@ -2,7 +2,6 @@ package ru.otus.hw.hw06.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.hw06.converters.AuthorConverter;
 import ru.otus.hw.hw06.dto.AuthorDto;
 import ru.otus.hw.hw06.mappers.AuthorMapper;
 import ru.otus.hw.hw06.repositories.AuthorRepository;

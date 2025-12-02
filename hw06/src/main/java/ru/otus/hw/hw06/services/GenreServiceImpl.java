@@ -2,11 +2,9 @@ package ru.otus.hw.hw06.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.hw06.converters.GenreConverter;
 import ru.otus.hw.hw06.dto.GenreDto;
 import ru.otus.hw.hw06.mappers.GenreMapper;
 import ru.otus.hw.hw06.repositories.GenreRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

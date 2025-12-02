@@ -3,7 +3,6 @@ package ru.otus.hw.hw06.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.hw06.converters.BookConverter;
 import ru.otus.hw.hw06.dto.BookDto;
 import ru.otus.hw.hw06.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw06.mappers.BookMapper;
