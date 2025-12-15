@@ -1,30 +1,23 @@
 package ru.otus.hw.hw06.services;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.hw06.converters.AuthorConverter;
 import ru.otus.hw.hw06.converters.BookConverter;
-import ru.otus.hw.hw06.converters.CommentConverter;
 import ru.otus.hw.hw06.converters.GenreConverter;
 import ru.otus.hw.hw06.mappers.AuthorMapper;
 import ru.otus.hw.hw06.mappers.BookMapper;
 import ru.otus.hw.hw06.mappers.GenreMapper;
-import ru.otus.hw.hw06.models.Book;
-import ru.otus.hw.hw06.repositories.AuthorRepository;
 import ru.otus.hw.hw06.repositories.BookRepository;
-import ru.otus.hw.hw06.repositories.GenreRepository;
 import ru.otus.hw.hw06.repositories.JpaAuthorRepository;
 import ru.otus.hw.hw06.repositories.JpaBookRepository;
-import ru.otus.hw.hw06.repositories.JpaCommentRepository;
 import ru.otus.hw.hw06.repositories.JpaGenreRepository;
 
 import java.util.Set;
