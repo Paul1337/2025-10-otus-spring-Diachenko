@@ -1,0 +1,27 @@
+{
+  "authors": [
+    { "_id": "a1", "fullName": "Author_1" },
+    { "_id": "a2", "fullName": "Author_2" },
+    { "_id": "a3", "fullName": "Author_3" }
+  ],
+  "genres": [
+    { "_id": "g1", "name":  "Genre_1" },
+    { "_id": "g2", "name":  "Genre_2" },
+    { "_id": "g3", "name":  "Genre_3" },
+    { "_id": "g4", "name":  "Genre_4" },
+    { "_id": "g5", "name":  "Genre_5" },
+    { "_id": "g6", "name":  "Genre_6" }
+  ],
+  "books": [
+    { "_id": "b1", "title": "BookTitle_1", "authorId": "a1", "genreIds": ["g1", "g2"] },
+    { "_id": "b2", "title": "BookTitle_2", "authorId": "a2", "genreIds": ["g3", "g4"] },
+    { "_id": "b3", "title": "BookTitle_3", "authorId": "a3", "genreIds": ["g5", "g6"] }
+  ],
+  "comments": [
+    { "_id": "c1", "text": "Comment_1", "bookId": "b1" },
+    { "_id": "c2", "text": "Comment_2", "bookId": "b1" },
+    { "_id": "c3", "text": "Comment_3", "bookId": "b2" },
+    { "_id": "c4", "text": "Comment_4", "bookId": "b2" },
+    { "_id": "c5", "text": "Comment_5", "bookId": "b2" }
+  ]
+}
