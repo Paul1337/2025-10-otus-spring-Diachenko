@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.otus.hw.hw08.config.MongoConfig;
 import ru.otus.hw.hw08.config.MongoDataInitializer;
 import ru.otus.hw.hw08.config.ObjectMapperConfig;
 import ru.otus.hw.hw08.converters.CommentConverter;
@@ -21,7 +22,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-@Import({ MongoDataInitializer.class, ObjectMapperConfig.class, CommentServiceImpl.class, CommentConverter.class, CommentMapper.class})
+@Import({ MongoDataInitializer.class, MongoConfig.class, ObjectMapperConfig.class, CommentServiceImpl.class, CommentConverter.class, CommentMapper.class})
 public class CommentServiceImplTest {
     @Autowired
     private CommentServiceImpl commentService;

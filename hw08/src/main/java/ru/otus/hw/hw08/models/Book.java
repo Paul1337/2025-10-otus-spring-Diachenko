@@ -23,11 +23,9 @@ public class Book {
     @Setter
     private String title;
 
-    @Field(name = "authorId")
     @Setter
-    private String authorId;
+    private Author author;
 
-    @Field(name = "genreIds")
     @Setter
-    private List<String> genreIds = new ArrayList<>();
+    private List<Genre> genres = new ArrayList<>();
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import ru.otus.hw.hw08.config.MongoConfig;
 import ru.otus.hw.hw08.config.MongoDataInitializer;
 import ru.otus.hw.hw08.config.ObjectMapperConfig;
 import ru.otus.hw.hw08.converters.AuthorConverter;
@@ -22,7 +23,7 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-@Import({ MongoDataInitializer.class, ObjectMapperConfig.class, AuthorServiceImpl.class, AuthorConverter.class, AuthorMapper.class})
+@Import({ MongoDataInitializer.class, MongoConfig.class, ObjectMapperConfig.class, AuthorServiceImpl.class, AuthorConverter.class, AuthorMapper.class})
 public class AuthorServiceImplTest {
     @Autowired
     private AuthorServiceImpl authorService;

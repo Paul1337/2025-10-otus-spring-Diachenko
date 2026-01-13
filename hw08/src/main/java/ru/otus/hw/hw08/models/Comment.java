@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -20,6 +21,6 @@ public class Comment {
     @Setter
     private String text;
 
-    @Field(name = "bookId")
-    private String bookId;
+    @DBRef(lazy = true)
+    private Book book;
 }

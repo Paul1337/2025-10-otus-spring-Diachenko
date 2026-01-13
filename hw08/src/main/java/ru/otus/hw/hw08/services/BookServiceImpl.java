@@ -15,7 +15,6 @@ import ru.otus.hw.hw08.repositories.GenreRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
@@ -35,39 +34,22 @@ public class BookServiceImpl implements BookService {
     @Override
     public Optional<BookDto> findById(String id) {
         var book = bookRepository.findById(id);
-        if (book.isEmpty()) {
-            return Optional.empty();
-        }
-        var bookAuthor = authorRepository.findById(book.get().getAuthorId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Book author with id %s not found".formatted(book.get().getAuthorId())));
-        var bookGenres = genreRepository.findAllById(book.get().getGenreIds());
-        return Optional.of(bookMapper.bookToDto(book.get(), bookAuthor, bookGenres));
+        return book.map(bookMapper::bookToDto);
     }
 
     @Override
     public List<BookDto> findAll() {
         var books = bookRepository.findAll();
-        var bookAuthors = authorRepository
-                .findAllById(books.stream().map(Book::getAuthorId).collect(Collectors.toSet()))
-                .stream().collect(Collectors.toMap(Author::getId, Function.identity()));
-        var bookGenres = genreRepository
-                .findAllById(books.stream().flatMap(book -> book.getGenreIds().stream()).collect(Collectors.toSet()))
-                .stream().collect(Collectors.toMap(Genre::getId, Function.identity()));
-
-        return books.stream().map(
-                book -> bookMapper.bookToDto(book, bookAuthors.get(book.getAuthorId()),
-                        book.getGenreIds().stream().map(bookGenres::get).toList())
-        ).collect(Collectors.toList());
+        return books.stream().map(bookMapper::bookToDto).collect(Collectors.toList());
     }
 
     @Override
     public BookDto insert(String title, String authorId, Set<String> genresIds) {
         var author = findAuthorById(authorId);
         var genres = findGenresByIds(genresIds);
-        var newBook = new Book(null, title, author.getId(), genres.stream().map(Genre::getId).toList());
+        var newBook = new Book(null, title, author, genres);
         var savedBook = bookRepository.save(newBook);
-        return bookMapper.bookToDto(savedBook, author, genres);
+        return bookMapper.bookToDto(savedBook);
     }
 
     @Override
@@ -77,17 +59,16 @@ public class BookServiceImpl implements BookService {
         var genres = findGenresByIds(genresIds);
 
         book.setTitle(title);
-        book.setAuthorId(author.getId());
-        book.setGenreIds(genres.stream().map(Genre::getId).toList());
+        book.setAuthor(author);
+        book.setGenres(genres);
 
         var savedBook = bookRepository.save(book);
-        return bookMapper.bookToDto(savedBook, author, genres);
+        return bookMapper.bookToDto(savedBook);
     }
 
     @Override
     public void deleteById(String id) {
         bookRepository.deleteById(id);
-        commentRepository.deleteByBookId(id);
     }
 
     private Author findAuthorById(String id) {

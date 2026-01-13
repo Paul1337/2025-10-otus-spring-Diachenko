@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import ru.otus.hw.hw08.config.MongoConfig;
 import ru.otus.hw.hw08.config.MongoDataInitializer;
 import ru.otus.hw.hw08.config.ObjectMapperConfig;
 import ru.otus.hw.hw08.converters.AuthorConverter;
@@ -20,6 +21,8 @@ import ru.otus.hw.hw08.dto.GenreDto;
 import ru.otus.hw.hw08.mappers.AuthorMapper;
 import ru.otus.hw.hw08.mappers.BookMapper;
 import ru.otus.hw.hw08.mappers.GenreMapper;
+import ru.otus.hw.hw08.repositories.CommentRepository;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,13 +31,16 @@ import java.util.stream.IntStream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-@Import({ MongoDataInitializer.class, ObjectMapperConfig.class, BookServiceImpl.class, BookConverter.class, AuthorConverter.class, GenreConverter.class, BookMapper.class, AuthorMapper.class, GenreMapper.class})
+@Import({ MongoDataInitializer.class, MongoConfig.class, ObjectMapperConfig.class, BookServiceImpl.class, BookConverter.class, AuthorConverter.class, GenreConverter.class, BookMapper.class, AuthorMapper.class, GenreMapper.class})
 public class BookServiceImplTest {
     @Autowired
     private BookServiceImpl bookService;
 
     @Autowired
     private BookConverter bookConverter;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private BookMapper bookMapper;
@@ -121,6 +127,18 @@ public class BookServiceImplTest {
         assertThat(foundBook.get())
                 .usingRecursiveComparison()
                 .isEqualTo(bookDto);
+    }
+
+    @DisplayName("должен корректно удалять книгу")
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void shouldDeleteBook() {
+        String bookId = "b1";
+        assertThat(bookService.findById(bookId)).isPresent();
+        assertThat(commentRepository.findByBookId(bookId)).isNotEmpty();
+        bookService.deleteById(bookId);
+        assertThat(bookService.findById(bookId)).isEmpty();
+        assertThat(commentRepository.findByBookId(bookId)).isEmpty();
     }
 
     private static List<AuthorDto> getDbAuthors() {

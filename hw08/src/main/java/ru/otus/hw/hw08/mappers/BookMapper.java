@@ -3,11 +3,7 @@ package ru.otus.hw.hw08.mappers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.hw.hw08.dto.BookDto;
-import ru.otus.hw.hw08.models.Author;
 import ru.otus.hw.hw08.models.Book;
-import ru.otus.hw.hw08.models.Genre;
-
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -17,10 +13,10 @@ public class BookMapper {
 
     private final GenreMapper genreMapper;
 
-    public BookDto bookToDto(Book book, Author author, List<Genre> genres) {
+    public BookDto bookToDto(Book book) {
         return new BookDto(book.getId(), book.getTitle(),
-                authorMapper.authorToDto(author),
-                genres.stream().map(genreMapper::genreToDto).collect(Collectors.toList())
+                authorMapper.authorToDto(book.getAuthor()),
+                book.getGenres().stream().map(genreMapper::genreToDto).collect(Collectors.toList())
         );
     }
 }
