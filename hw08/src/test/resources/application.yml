@@ -1,0 +1,12 @@
+spring:
+  data:
+    mongodb:
+      database: book_library
+      auto-index-creation: true
+
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 6.0.5
