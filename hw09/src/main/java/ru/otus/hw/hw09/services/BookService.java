@@ -3,10 +3,7 @@ package ru.otus.hw.hw09.services;
 import ru.otus.hw.hw09.dto.BookDto;
 import ru.otus.hw.hw09.dto.CreateBookDto;
 import ru.otus.hw.hw09.dto.UpdateBookDto;
-
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public interface BookService {
     BookDto findById(long id);

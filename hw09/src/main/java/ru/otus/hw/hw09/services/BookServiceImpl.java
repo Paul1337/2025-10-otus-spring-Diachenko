@@ -15,10 +15,8 @@ import ru.otus.hw.hw09.repositories.AuthorRepository;
 import ru.otus.hw.hw09.repositories.BookRepository;
 import ru.otus.hw.hw09.repositories.GenreRepository;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RequiredArgsConstructor
