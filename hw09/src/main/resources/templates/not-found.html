@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Объект не найден</title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            color: #222;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 120px auto;
+            padding: 0 16px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 32px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .home-link {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #f0f0f0;
+            font-size: 14px;
+        }
+
+        .home-link:hover {
+            background-color: #e6e6e6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>404</h1>
+
+    <p th:text="${message}">
+    </p>
+
+    <a th:href="@{/}" class="home-link">
+        ← Вернуться на главную
+    </a>
+</div>
+
+</body>
+</html>
