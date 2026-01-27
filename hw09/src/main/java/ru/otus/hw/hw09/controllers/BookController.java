@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.otus.hw.hw09.dto.BookDto;
+import ru.otus.hw.hw09.dto.CreateBookDto;
 import ru.otus.hw.hw09.dto.UpdateBookDto;
-import ru.otus.hw.hw09.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw09.services.AuthorService;
 import ru.otus.hw.hw09.services.BookService;
 import ru.otus.hw.hw09.services.CommentService;
@@ -36,8 +36,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     public String book(@PathVariable long id, Model model) {
-        var bookDto = bookService.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Книга с id = %d не найдена!".formatted(id)));
+        var bookDto = bookService.findById(id);
         var commentDtos = commentService.findAllByBookId(id);
         model.addAttribute("book", bookDto);
         model.addAttribute("comments", commentDtos);
@@ -53,15 +52,14 @@ public class BookController {
     }
 
     @PostMapping("/new")
-    public String createBook(@ModelAttribute("book") UpdateBookDto bookDto) {
-        bookService.insert(bookDto.getTitle(), bookDto.getAuthorId(), bookDto.getGenreIds());
+    public String createBook(@ModelAttribute("book") CreateBookDto dto) {
+        bookService.insert(dto);
         return "redirect:/books";
     }
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable long id, Model model) {
-        var bookDto = bookService.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Книга с id = %d не найдена!".formatted(id)));
+        var bookDto = bookService.findById(id);
         model.addAttribute("book", bookDto);
         model.addAttribute("authors", authorService.findAll());
         model.addAttribute("genres", genreService.findAll());
@@ -69,8 +67,8 @@ public class BookController {
     }
 
     @PostMapping("/{id}/edit")
-    public String editBook(@PathVariable long id, @ModelAttribute("book") UpdateBookDto bookDto) {
-        bookService.update(bookDto.getId(), bookDto.getTitle(), bookDto.getAuthorId(), bookDto.getGenreIds());
+    public String editBook(@PathVariable long id, @ModelAttribute("book") UpdateBookDto dto) {
+        bookService.update(dto);
         return "redirect:/books/%d".formatted(id);
     }
 

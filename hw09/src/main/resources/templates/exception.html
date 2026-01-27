@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка 500</title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            color: #222;
+        }
+
+        .container {
+            margin: 80px auto;
+            padding: 0 16px;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .description {
+            text-align: center;
+            color: #555;
+            margin-bottom: 32px;
+        }
+
+        .stacktrace {
+            background-color: #f3f3f3;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 13px;
+            line-height: 1.5;
+            overflow-x: auto;
+            white-space: pre;
+            color: #333;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .home-link {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #eaeaea;
+            font-size: 14px;
+        }
+
+        .home-link:hover {
+            background-color: #dedede;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>500</h1>
+    <div class="description">
+        Произошла внутренняя ошибка сервера
+    </div>
+
+    <pre class="stacktrace"
+         th:each="line : ${stackTrace}"
+         th:text="${line}">
+    </pre>
+
+    <div style="text-align: center;">
+        <a th:href="@{/}" class="home-link">
+            ← Вернуться на главную
+        </a>
+    </div>
+</div>
+</body>
+</html>

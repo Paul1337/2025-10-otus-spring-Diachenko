@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.hw09.dto.BookDto;
+import ru.otus.hw.hw09.dto.CreateBookDto;
+import ru.otus.hw.hw09.dto.UpdateBookDto;
 import ru.otus.hw.hw09.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw09.mappers.BookMapper;
 import ru.otus.hw.hw09.models.Author;
@@ -32,9 +34,12 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<BookDto> findById(long id) {
+    public BookDto findById(long id) {
         var book = bookRepository.findById(id);
-        return book.map(bookMapper::bookToDto);
+        if (book.isEmpty()) {
+            throw new EntityNotFoundException("Книга с id = %d не найдена!".formatted(id));
+        }
+        return bookMapper.bookToDto(book.get());
     }
 
     @Transactional(readOnly = true)
@@ -46,22 +51,22 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto insert(String title, long authorId, Set<Long> genresIds) {
-        var author = findAuthorById(authorId);
-        var genres = findGenresByIds(genresIds);
-        var newBook = new Book(0, title, author, genres);
+    public BookDto insert(CreateBookDto dto) {
+        var author = findAuthorById(dto.getAuthorId());
+        var genres = findGenresByIds(dto.getGenreIds());
+        var newBook = new Book(0, dto.getTitle(), author, genres);
         var savedBook = bookRepository.save(newBook);
         return bookMapper.bookToDto(savedBook);
     }
 
     @Transactional
     @Override
-    public BookDto update(long id, String title, long authorId, Set<Long> genresIds) {
-        var book = findBookById(id);
-        var author = findAuthorById(authorId);
-        var genres = findGenresByIds(genresIds);
+    public BookDto update(UpdateBookDto dto) {
+        var book = findBookById(dto.getId());
+        var author = findAuthorById(dto.getAuthorId());
+        var genres = findGenresByIds(dto.getGenreIds());
 
-        book.setTitle(title);
+        book.setTitle(dto.getTitle());
         book.setAuthor(author);
         book.setGenres(genres);
 

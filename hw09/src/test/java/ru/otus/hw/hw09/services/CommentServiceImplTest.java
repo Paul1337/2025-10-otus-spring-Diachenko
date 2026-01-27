@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.hw09.converters.CommentConverter;
 import ru.otus.hw.hw09.dto.CommentDto;
 import ru.otus.hw.hw09.mappers.CommentMapper;
 import java.util.List;
@@ -20,14 +19,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static ru.otus.hw.hw09.TestDb.getDbComments;
 
 @DataJpaTest
-@Import({ CommentServiceImpl.class, CommentConverter.class, CommentMapper.class})
+@Import({ CommentServiceImpl.class, CommentMapper.class})
 @Transactional(propagation = Propagation.NEVER)
 public class CommentServiceImplTest {
     @Autowired
     private CommentServiceImpl commentService;
-
-    @Autowired
-    private CommentConverter commentConverter;
 
     private List<CommentDto> dbComments;
 
@@ -47,9 +43,6 @@ public class CommentServiceImplTest {
         assertThat(actualCommentDto.get())
                 .usingRecursiveComparison()
                 .isEqualTo(expectedCommectDto);
-
-        String dtoAsString = commentConverter.commentDtoToString(actualCommentDto.get());
-        System.out.println(dtoAsString);
     }
 
     @DisplayName("должен загружать список комментариев по id книги")
@@ -62,9 +55,6 @@ public class CommentServiceImplTest {
         assertThat(commentDtos)
                 .allMatch(dto -> dto.getId() > 0)
                 .allMatch(dto -> dto.getText() != null);
-
-        var commentsStr = commentDtos.stream().map(commentConverter::commentDtoToString).collect(Collectors.toList());
-        System.out.println(commentsStr);
     }
 
     @DisplayName("должен создавать новый комментарий")
@@ -75,9 +65,6 @@ public class CommentServiceImplTest {
         assertThat(commentDto).isNotNull();
         assertThat(commentDto.getText()).isEqualTo("test");
         assertThat(commentDto).matches(dto -> dto.getId() > 0);
-
-        var commentStr = commentConverter.commentDtoToString(commentDto);
-        System.out.println(commentStr);
 
         var foundComment = commentService.findById(commentDto.getId());
         assertThat(foundComment).isPresent();
@@ -95,9 +82,6 @@ public class CommentServiceImplTest {
         assertThat(commentDto)
                 .matches(dto -> dto.getText().equals("updated"))
                 .matches(dto -> dto.getId() == 1);
-
-        var commentStr = commentConverter.commentDtoToString(commentDto);
-        System.out.println(commentStr);
 
         var foundComment = commentService.findById(commentDto.getId());
         assertThat(foundComment).isPresent();

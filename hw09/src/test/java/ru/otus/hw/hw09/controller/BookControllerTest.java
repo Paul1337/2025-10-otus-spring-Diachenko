@@ -11,8 +11,10 @@ import ru.otus.hw.hw09.controllers.BookController;
 import ru.otus.hw.hw09.dto.AuthorDto;
 import ru.otus.hw.hw09.dto.BookDto;
 import ru.otus.hw.hw09.dto.CommentDto;
+import ru.otus.hw.hw09.dto.CreateBookDto;
 import ru.otus.hw.hw09.dto.GenreDto;
 import ru.otus.hw.hw09.dto.UpdateBookDto;
+import ru.otus.hw.hw09.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw09.services.AuthorService;
 import ru.otus.hw.hw09.services.BookService;
 import ru.otus.hw.hw09.services.CommentService;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static ru.otus.hw.hw09.TestDb.getDbAuthors;
 import static ru.otus.hw.hw09.TestDb.getDbBooks;
@@ -84,7 +87,7 @@ public class BookControllerTest {
         BookDto expectedBook = dbBooks.stream().filter(bookDto -> bookDto.getId() == bookId).findFirst().orElseThrow();
         List<CommentDto> expectedComments = List.of(dbComments.get(0), dbComments.get(1));
 
-        when(bookService.findById(1L)).thenReturn(Optional.of(expectedBook));
+        when(bookService.findById(1L)).thenReturn(expectedBook);
         when(commentService.findAllByBookId(1L)).thenReturn(expectedComments);
 
         mvc.perform(get("/books/%d".formatted(bookId)))
@@ -111,7 +114,7 @@ public class BookControllerTest {
 
         when(authorService.findAll()).thenReturn(dbAuthors);
         when(genreService.findAll()).thenReturn(dbGenres);
-        when(bookService.findById(bookId)).thenReturn(Optional.ofNullable(dbBooks.getFirst()));
+        when(bookService.findById(bookId)).thenReturn(dbBooks.getFirst());
 
         mvc.perform(get("/books/%d/edit".formatted(bookId)))
                 .andExpect(view().name("books/edit"))
@@ -122,7 +125,7 @@ public class BookControllerTest {
 
     @Test
     void shouldCorrectlyCreateNewBook() throws Exception {
-        UpdateBookDto dto = new UpdateBookDto(0L, "new-book", 1L, Set.of(
+        var dto = new CreateBookDto("new-book", 1L, Set.of(
                 1L,
                 2L
         ));
@@ -135,7 +138,7 @@ public class BookControllerTest {
                 .param("genreIds", "2"))
                 .andExpect(view().name("redirect:/books"));
 
-        verify(bookService).insert(dto.getTitle(), dto.getAuthorId(), dto.getGenreIds());
+        verify(bookService).insert(dto);
     }
 
     @Test
@@ -153,7 +156,7 @@ public class BookControllerTest {
                         .param("genreIds", "4"))
                 .andExpect(view().name("redirect:/books/%d".formatted(dto.getId())));
 
-        verify(bookService).update(dto.getId(), dto.getTitle(), dto.getAuthorId(), dto.getGenreIds());
+        verify(bookService).update(dto);
     }
 
     @Test
@@ -163,4 +166,16 @@ public class BookControllerTest {
         verify(bookService).deleteById(1L);
     }
 
+    @Test
+    void shouldRenderNotFoundPageCorrectly() throws Exception {
+        long bookId = 100;
+        String exceptionMessage = "message";
+        EntityNotFoundException exception = new EntityNotFoundException(exceptionMessage);
+        when(bookService.findById(bookId)).thenThrow(exception);
+
+        mvc.perform(get("/books/%d".formatted(bookId)))
+                .andExpect(view().name("not-found"))
+                .andExpect(status().isNotFound())
+                .andExpect(model().attribute("message", exceptionMessage));
+    }
 }
