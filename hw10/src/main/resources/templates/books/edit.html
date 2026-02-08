@@ -150,19 +150,11 @@
         </div>
     </form>
 
-    <div class="delete-container">
+    <div th:if="${book.id != 0}" class="delete-container">
         <button class="btn-danger" id="btn-delete">
             Удалить книгу
         </button>
     </div>
-
-<!--    <form th:if="${book.id != 0}"-->
-<!--          th:action="@{/books/{id}/delete(id=${book.id})}"-->
-<!--          method="post"-->
-<!--          class="delete-container">-->
-
-<!--        -->
-<!--    </form>-->
 
 </div>
 
