@@ -76,6 +76,8 @@
             padding: 20px;
         }
     </style>
+
+    <script th:src="@{/js/genre-list.js}" defer></script>
 </head>
 
 <body>
@@ -86,17 +88,9 @@
         <h1>Жанры</h1>
     </div>
 
-    <ul class="genres-list" th:if="${!genres.isEmpty()}">
-        <li class="genre-item" th:each="genre : ${genres}">
-            <span class="genre-name" th:text="${genre.name}">Genre Name</span>
-            <span class="genre-id" th:text="'id ' + ${genre.id}">id</span>
-        </li>
-    </ul>
-
-    <div class="empty" th:if="${genres.isEmpty()}">
-        Нет авторов
+    <div id="data-container">
+        Загрузка...
     </div>
-
 </div>
 </body>
 </html>

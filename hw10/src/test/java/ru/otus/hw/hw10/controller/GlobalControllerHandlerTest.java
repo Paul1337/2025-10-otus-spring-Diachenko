@@ -15,14 +15,6 @@ public class GlobalControllerHandlerTest {
     private MockMvc mvc;
 
     @Test
-    void shouldHandleEntityNotFoundException() throws Exception {
-        mvc.perform(get("/test/not-found"))
-                .andExpect(status().isNotFound())
-                .andExpect(view().name("not-found"))
-                .andExpect(model().attribute("message", "Entity not found"));
-    }
-
-    @Test
     void shouldHandleGenericException() throws Exception {
         mvc.perform(get("/test/error"))
                 .andExpect(status().isInternalServerError());

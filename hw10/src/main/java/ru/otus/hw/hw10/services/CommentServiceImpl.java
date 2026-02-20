@@ -24,6 +24,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> findAllByBookId(long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
+        }
         var comments = commentRepository.findByBookId(bookId);
         return comments.stream().map(commentMapper::commentToDto).collect(Collectors.toList());
     }

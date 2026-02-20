@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${book.id == null} ? 'Создание книги' : 'Редактирование книги'">
+    <title th:text="${id == 0 ? 'Создание книги' : 'Редактирование книги'}">
         Книга
     </title>
 
@@ -102,41 +102,39 @@
 
     <script th:src="@{/js/book-edit.js}" defer></script>
 </head>
-<body th:data-mode="${book.id == 0 ? 'create' : 'edit'}" th:data-book-id="${book.id}">
+<body th:data-book-id="${id}">
 
 <div class="container">
-    <h1 th:text="${book.id == 0} ? 'Создание книги' : 'Редактирование книги'"></h1>
+    <h1 th:text="${id == 0 ? 'Создание книги' : 'Редактирование книги'}"></h1>
 
     <form id="form">
-        <input type="hidden" name="id" th:value="${book.id}"/>
+        <input type="hidden" name="id"/>
 
         <label for="title">Название книги</label>
         <input type="text"
                id="title"
                name="title"
-               th:value="${book.title}"
                required/>
 
         <label for="author">Автор</label>
         <select id="author" name="authorId" required>
-            <option value="" disabled
-                    th:selected="${book.authorDto == null}">
+            <option value="" disabled>
                 -- выберите автора --
             </option>
-            <option th:each="author : ${authors}"
-                    th:value="${author.id}"
-                    th:text="${author.fullName}"
-                    th:selected="${book.authorDto != null && author.id == book.authorDto.id}">
-            </option>
+<!--            <option th:each="author : ${authors}"-->
+<!--                    th:value="${author.id}"-->
+<!--                    th:text="${author.fullName}"-->
+<!--                    th:selected="${book.authorDto != null && author.id == book.authorDto.id}">-->
+<!--            </option>-->
         </select>
 
         <label for="genres">Жанры</label>
         <select id="genres" name="genreIds" multiple>
-            <option th:each="genre : ${genres}"
-                    th:value="${genre.id}"
-                    th:text="${genre.name}"
-                    th:selected="${book.genreDtos != null && book.genreDtos.contains(genre)}">
-            </option>
+<!--            <option th:each="genre : ${genres}"-->
+<!--                    th:value="${genre.id}"-->
+<!--                    th:text="${genre.name}"-->
+<!--                    th:selected="${book.genreDtos != null && book.genreDtos.contains(genre)}">-->
+<!--            </option>-->
         </select>
 
         <div class="actions">
@@ -150,7 +148,7 @@
         </div>
     </form>
 
-    <div th:if="${book.id != 0}" class="delete-container">
+    <div th:if="${id != 0}" class="delete-container">
         <button class="btn-danger" id="btn-delete">
             Удалить книгу
         </button>

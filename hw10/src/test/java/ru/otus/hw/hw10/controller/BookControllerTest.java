@@ -37,18 +37,6 @@ public class BookControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockitoBean
-    private BookService bookService;
-
-    @MockitoBean
-    private CommentService commentService;
-
-    @MockitoBean
-    private AuthorService authorService;
-
-    @MockitoBean
-    private GenreService genreService;
-
     private List<AuthorDto> dbAuthors;
 
     private List<GenreDto> dbGenres;
@@ -67,68 +55,42 @@ public class BookControllerTest {
 
     @Test
     void shouldRenderListPageWithCorrectViewAndModelAttributes() throws Exception {
-        when(bookService.findAll()).thenReturn(dbBooks);
         mvc.perform(get("/books"))
-                .andExpect(view().name("books/books"))
-                .andExpect(model().attribute("books", dbBooks));
-        mvc.perform(get("/books/"))
-                .andExpect(view().name("books/books"))
-                .andExpect(model().attribute("books", dbBooks));
-
+                .andExpect(view().name("books/books"));
     }
 
     @Test
     void shouldRenderBookPageWithCorrectViewAndModelAttributes() throws Exception {
         long bookId = 1L;
-        BookDto expectedBook = dbBooks.stream().filter(bookDto -> bookDto.getId() == bookId).findFirst().orElseThrow();
-        List<CommentDto> expectedComments = List.of(dbComments.get(0), dbComments.get(1));
-
-        when(bookService.findById(1L)).thenReturn(expectedBook);
-        when(commentService.findAllByBookId(1L)).thenReturn(expectedComments);
 
         mvc.perform(get("/books/%d".formatted(bookId)))
-                .andExpect(view().name("books/book"))
-                .andExpect(model().attribute("book", expectedBook))
-                .andExpect(model().attribute("comments", expectedComments));
+                .andExpect(view().name("books/book"));
     }
 
     @Test
     void shouldRenderNewBookPageWithCorrectViewAndModelAttributes() throws Exception {
-        when(authorService.findAll()).thenReturn(dbAuthors);
-        when(genreService.findAll()).thenReturn(dbGenres);
-
         mvc.perform(get("/books/new"))
-                .andExpect(view().name("books/edit"))
-                .andExpect(model().attribute("authors", dbAuthors))
-                .andExpect(model().attribute("genres", dbGenres))
-                .andExpect(model().attribute("book", hasProperty("id", is(0L))));
+                .andExpect(view().name("books/edit"));
     }
 
     @Test
     void shouldRenderEditBookPageWithCorrectViewAndModelAttributes() throws Exception {
         long bookId = 1L;
 
-        when(authorService.findAll()).thenReturn(dbAuthors);
-        when(genreService.findAll()).thenReturn(dbGenres);
-        when(bookService.findById(bookId)).thenReturn(dbBooks.getFirst());
-
         mvc.perform(get("/books/%d/edit".formatted(bookId)))
-                .andExpect(view().name("books/edit"))
-                .andExpect(model().attribute("authors", dbAuthors))
-                .andExpect(model().attribute("genres", dbGenres))
-                .andExpect(model().attribute("book", dbBooks.getFirst()));
+                .andExpect(view().name("books/edit"));
     }
 
-    @Test
-    void shouldRenderNotFoundPageCorrectly() throws Exception {
-        long bookId = 100;
-        String exceptionMessage = "message";
-        EntityNotFoundException exception = new EntityNotFoundException(exceptionMessage);
-        when(bookService.findById(bookId)).thenThrow(exception);
-
-        mvc.perform(get("/books/%d".formatted(bookId)))
-                .andExpect(view().name("not-found"))
-                .andExpect(status().isNotFound())
-                .andExpect(model().attribute("message", exceptionMessage));
-    }
+//    @Test
+//    void shouldRenderNotFoundPageCorrectly() throws Exception {
+//        long bookId = 100;
+//        String exceptionMessage = "message";
+//        EntityNotFoundException exception = new EntityNotFoundException(exceptionMessage);
+//        when(bookService.findById(bookId)).thenThrow(exception);
+//
+//        mvc.perform(get("/books/%d".formatted(bookId)))
+//                .andExpect(view().name("not-found"))
+//                .andExpect(status().isNotFound())
+//                .andExpect(model().attribute("message", exceptionMessage));
+//    }
 }

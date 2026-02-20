@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${book.title}">Книга</title>
+    <title>Просмотр книги</title>
 
     <style>
         body {
@@ -114,57 +114,55 @@
             font-size: 14px;
             color: #777;
         }
+
+        #book-error, #comments-error {
+            margin-top: 10px;
+            font-size: 16px;
+            color: red;
+        }
     </style>
+
+    <script th:src="@{/js/book-item.js}" defer></script>
 </head>
 
-<body>
+<body th:data-book-id="${id}">
 <div class="container">
 
     <div class="header">
         <div class="header-left">
             <a th:href="@{/books}" class="back-link">←</a>
-            <h1 th:text="${book.title}">Book title</h1>
+            <h1 id="book-title">...</h1>
         </div>
 
-        <a th:href="@{/books/{id}/edit(id=${book.id})}"
-           class="edit-link">
+        <a th:href="@{/books/{id}/edit(id=${id})}" class="edit-link">
             ✎ Редактировать
         </a>
     </div>
 
-
     <div class="meta">
         <span>
             Автор:
-            <strong th:text="${book.authorDto.fullName}">
-                Author
+            <strong id="book-author">
+                ...
             </strong>
         </span>
     </div>
 
-    <div class="genres" th:if="${!book.genreDtos.isEmpty()}">
-        <span class="genre"
-              th:each="genre : ${book.genreDtos}"
-              th:text="${genre.name}">
-            Genre
-        </span>
+    <div class="genres" id="book-genres-container">
+        Загрузка...
     </div>
 
     <div class="section">
         <h2>Комментарии</h2>
 
-        <ul class="comment-list" th:if="${!comments.isEmpty()}">
-            <li class="comment"
-                th:each="comment : ${comments}"
-                th:text="${comment.text}">
-                Comment text
-            </li>
+        <ul class="comment-list" id="book-comments-container">
+            Загрузка...
         </ul>
-
-        <div class="empty" th:if="${comments.isEmpty()}">
-            Комментариев пока нет
-        </div>
     </div>
+
+    <div id="book-error" class="empty" style="display:none;"></div>
+    <div id="comments-error" class="empty" style="display:none;"></div>
+
 
 </div>
 </body>

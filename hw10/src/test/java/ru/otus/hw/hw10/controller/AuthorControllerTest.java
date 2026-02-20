@@ -19,20 +19,9 @@ public class AuthorControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockitoBean
-    private AuthorService authorService;
-
     @Test
     void shouldRenderListPageWithCorrectViewAndModelAttributes() throws Exception {
-        List<AuthorDto> expectedAuthors = List.of(
-                new AuthorDto(1L, "Author1"),
-                new AuthorDto(2L, "Author2"));
-        when(authorService.findAll()).thenReturn(expectedAuthors);
         mvc.perform(get("/authors"))
-                .andExpect(view().name("authors"))
-                .andExpect(model().attribute("authors", expectedAuthors));
-        mvc.perform(get("/authors/"))
-                .andExpect(view().name("authors"))
-                .andExpect(model().attribute("authors", expectedAuthors));
+                .andExpect(view().name("authors"));
     }
 }

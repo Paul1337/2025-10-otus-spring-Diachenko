@@ -19,21 +19,10 @@ public class GenreControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockitoBean
-    private GenreService genreService;
-
     @Test
     void shouldRenderListPageWithCorrectViewAndModelAttributes() throws Exception {
-        List<GenreDto> expectedGenres = List.of(
-                new GenreDto(1L, "Genre1"),
-                new GenreDto(2L, "Genre2"));
-        when(genreService.findAll()).thenReturn(expectedGenres);
         mvc.perform(get("/genres"))
-                .andExpect(view().name("genres"))
-                .andExpect(model().attribute("genres", expectedGenres));
-        mvc.perform(get("/genres/"))
-                .andExpect(view().name("genres"))
-                .andExpect(model().attribute("genres", expectedGenres));
+                .andExpect(view().name("genres"));
 
     }
 }

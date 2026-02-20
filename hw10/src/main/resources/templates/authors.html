@@ -76,6 +76,8 @@
             padding: 20px;
         }
     </style>
+
+    <script th:src="@{/js/author-list.js}" defer></script>
 </head>
 
 <body>
@@ -86,15 +88,8 @@
         <h1>Авторы</h1>
     </div>
 
-    <ul class="author-list" th:if="${!authors.isEmpty()}">
-        <li class="author-item" th:each="author : ${authors}">
-            <span class="author-name" th:text="${author.fullName}">Author Name</span>
-            <span class="author-id" th:text="'id ' + ${author.id}">id</span>
-        </li>
-    </ul>
-
-    <div class="empty" th:if="${authors.isEmpty()}">
-        Нет авторов
+    <div id="data-container">
+        Загрузка...
     </div>
 
 </div>

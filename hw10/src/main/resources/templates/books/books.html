@@ -133,6 +133,8 @@
             background-color: #000;
         }
     </style>
+
+    <script th:src="@{/js/book-list.js}" defer></script>
 </head>
 
 <body>
@@ -143,34 +145,10 @@
         <h1>Книги</h1>
     </div>
 
-    <ul class="book-list" th:if="${!books.isEmpty()}">
-        <a class="book-item" th:href="@{/books/{id}(id=${book.id})}"  th:each="book : ${books}">
-            <div class="book-title" th:text="${book.title}">
-                Book title
-            </div>
-
-            <div class="book-meta">
-                <span>
-                    Автор:
-                    <strong th:text="${book.authorDto.fullName}">
-                        Author name
-                    </strong>
-                </span>
-            </div>
-
-            <div class="genres" th:if="${!book.genreDtos.isEmpty()}">
-                <span class="genre"
-                      th:each="genre : ${book.genreDtos}"
-                      th:text="${genre.name}">
-                    Genre
-                </span>
-            </div>
-        </a>
-    </ul>
-
-    <div class="empty" th:if="${books.isEmpty()}">
-        Книги отсутствуют
+    <div id="data-container">
+        Загрузка...
     </div>
+
 
     <div class="create-book">
         <a th:href="@{/books/new}" class="create-book-btn">

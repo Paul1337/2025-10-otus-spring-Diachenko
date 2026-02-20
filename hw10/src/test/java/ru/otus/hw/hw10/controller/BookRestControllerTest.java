@@ -16,6 +16,7 @@ import ru.otus.hw.hw10.dto.CreateBookDto;
 import ru.otus.hw.hw10.dto.GenreDto;
 import ru.otus.hw.hw10.dto.UpdateBookDto;
 import ru.otus.hw.hw10.services.BookService;
+import ru.otus.hw.hw10.services.CommentService;
 
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,9 @@ public class BookRestControllerTest {
     @MockitoBean
     private BookService bookService;
 
+    @MockitoBean
+    private CommentService commentService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -53,15 +57,11 @@ public class BookRestControllerTest {
 
     private List<BookDto> dbBooks;
 
-//    private List<CommentDto> dbComments;
-
-
     @BeforeEach
     void setUp() {
         dbAuthors = getDbAuthors();
         dbGenres = getDbGenres();
         dbBooks = getDbBooks(dbAuthors, dbGenres);
-//        dbComments = getDbComments();
     }
 
     @Test
@@ -77,7 +77,7 @@ public class BookRestControllerTest {
 
         when(bookService.insert(requestDto)).thenReturn(returnedBook);
 
-        mvc.perform(post("/books")
+        mvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ public class BookRestControllerTest {
         when(bookService.update(any(UpdateBookDto.class)))
                 .thenReturn(expectedResponse);
 
-        mvc.perform(put("/books/{id}", bookId)
+        mvc.perform(put("/api/books/{id}", bookId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -134,7 +134,7 @@ public class BookRestControllerTest {
     void shouldCorrectlyDeleteBook() throws Exception {
         long bookId = 2L;
 
-        mvc.perform(delete("/books/{id}", bookId))
+        mvc.perform(delete("/api/books/{id}", bookId))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
