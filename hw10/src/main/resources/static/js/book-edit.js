@@ -99,6 +99,7 @@ loadReferences()
                       }
                       return Promise.reject(`HTTP ${response.status}`);
                   }
+                  return response;
             })
             .then(res => res.json())
             .then(updateBook)
@@ -107,6 +108,17 @@ loadReferences()
                 // may be 404 error
             })
 
+        btnDelete.addEventListener('click', () => {
+            fetch(`/api/books/${bookId}`, {
+                method: 'DELETE',
+            })
+            .then(data => {
+                window.location.replace('/books/');
+            })
+            .catch(err => {
+                console.log('error', err);
+            })
+        })
     }
 });
 
@@ -135,14 +147,3 @@ btnSave.addEventListener('click', () => {
     })
 });
 
-btnDelete.addEventListener('click', () => {
-    fetch(`/api/books/${bookId}`, {
-        method: 'DELETE',
-    })
-    .then(data => {
-        window.location.replace('/books/');
-    })
-    .catch(err => {
-        console.log('error', err);
-    })
-})

@@ -24,7 +24,7 @@ public class BookController {
 
     @GetMapping("/new")
     public String createForm(Model model) {
-        model.addAttribute("mode", "create");
+        model.addAttribute("id", 0);
         return "books/edit";
     }
 

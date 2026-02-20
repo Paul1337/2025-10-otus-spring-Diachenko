@@ -1,5 +1,6 @@
 package ru.otus.hw.hw10.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,12 +43,12 @@ public class BookRestController {
     }
 
     @PostMapping({ "", "/" })
-    public BookDto createBook(@RequestBody CreateBookDto dto) {
+    public BookDto createBook(@Valid @RequestBody CreateBookDto dto) {
         return bookService.insert(dto);
     }
 
     @PutMapping({ "/{id}", "/{id}/" })
-    public BookDto editBook(@RequestBody UpdateBookDto dto, @PathVariable("id") Long id) {
+    public BookDto editBook(@Valid @RequestBody UpdateBookDto dto, @PathVariable("id") Long id) {
         dto.setId(id);
         return bookService.update(dto);
     }
