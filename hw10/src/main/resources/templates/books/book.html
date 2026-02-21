@@ -115,6 +115,25 @@
             color: #777;
         }
 
+        .new-comment-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .new-comment-block > input {
+            border-radius: 6px;
+            padding: 12px;
+            flex: 1;
+        }
+
+        .new-comment-block > button {
+            cursor: pointer;
+            padding: 12px;
+            margin: 0;
+        }
+
         #book-error, #comments-error {
             margin-top: 10px;
             font-size: 16px;
@@ -158,6 +177,11 @@
         <ul class="comment-list" id="book-comments-container">
             Загрузка...
         </ul>
+
+        <div class="new-comment-block">
+            <input  id="input-new-comment" type="text" placeholder="новый комментарий.." />
+            <button id="btn-new-comment" class="comment">Добавить</button>
+        </div>
     </div>
 
     <div id="book-error" class="empty" style="display:none;"></div>

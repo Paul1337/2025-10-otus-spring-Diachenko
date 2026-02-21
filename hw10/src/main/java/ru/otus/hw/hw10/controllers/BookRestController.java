@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.hw10.dto.BookDto;
 import ru.otus.hw.hw10.dto.CommentDto;
 import ru.otus.hw.hw10.dto.CreateBookDto;
+import ru.otus.hw.hw10.dto.CreateCommentDto;
 import ru.otus.hw.hw10.dto.UpdateBookDto;
 import ru.otus.hw.hw10.services.BookService;
 import ru.otus.hw.hw10.services.CommentService;
@@ -35,6 +36,11 @@ public class BookRestController {
     @GetMapping({ "/{id}/comments", "/{id}/comments/" })
     public List<CommentDto> getCommentsForBook(@PathVariable("id") Long id) {
         return commentService.findAllByBookId(id);
+    }
+
+    @PostMapping({ "/{id}/comments", "/{id}/comments/" })
+    public CommentDto addCommentForBook(@PathVariable("id") Long id, @Valid @RequestBody CreateCommentDto dto) {
+        return commentService.create(dto.getText(), id);
     }
 
     @GetMapping({ "", "/" })

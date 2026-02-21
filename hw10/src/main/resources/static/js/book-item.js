@@ -21,7 +21,12 @@ const updateComments = comments => {
     }
 }
 
-const bookId = document.body.dataset.bookId;
+const addNewComment = ({ text }) => {
+    const container = document.getElementById('book-comments-container');
+    container.innerHTML += `<li class="comment">${text}</li>`;
+}
+
+const bookId = Number(document.body.dataset.bookId);
 
 fetch(`/api/books/${bookId}`)
   .then(response => {
@@ -54,4 +59,22 @@ fetch(`/api/books/${bookId}/comments`)
      errorDiv.style.display = 'block';
   });
 
+const btnAddComment = document.getElementById('btn-new-comment');
+const inputNewComment = document.getElementById('input-new-comment');
 
+btnAddComment.addEventListener('click', () => {
+    const text = inputNewComment.value;
+    fetch(`/api/books/${bookId}/comments`, {
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        method: 'POST',
+    })
+    .then(res => res.json())
+    .then(commentDto => {
+        addNewComment(commentDto);
+        inputNewComment.value = '';
+    })
+    .catch(err => {
+        console.log(err);
+    })
+});
