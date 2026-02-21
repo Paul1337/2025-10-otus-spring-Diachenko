@@ -9,7 +9,11 @@ const updateBookItem = book => {
     genresContainer.innerHTML = genres.map(g => `<span class="genre">${g.name}</span>`).join('');
 };
 
+let commentsState = [];
+
 const updateComments = comments => {
+    commentsState = comments;
+
     const container = document.getElementById('book-comments-container');
 
     if (comments.length === 0) {
@@ -21,9 +25,11 @@ const updateComments = comments => {
     }
 }
 
-const addNewComment = ({ text }) => {
+const addNewComment = (comment) => {
     const container = document.getElementById('book-comments-container');
-    container.innerHTML += `<li class="comment">${text}</li>`;
+    if (commentsState.length === 0) container.innerHTML = '';
+    container.innerHTML += `<li class="comment">${comment.text}</li>`;
+    commentsState.push(comment);
 }
 
 const bookId = Number(document.body.dataset.bookId);
@@ -64,6 +70,7 @@ const inputNewComment = document.getElementById('input-new-comment');
 
 btnAddComment.addEventListener('click', () => {
     const text = inputNewComment.value;
+    if (!text) return;
     fetch(`/api/books/${bookId}/comments`, {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
