@@ -16,8 +16,6 @@ import ru.otus.hw.hw11.dto.BookDto;
 import ru.otus.hw.hw11.dto.CreateBookDto;
 import ru.otus.hw.hw11.dto.UpdateBookDto;
 import ru.otus.hw.hw11.services.BookService;
-import ru.otus.hw.hw11.services.CommentService;
-
 import java.util.List;
 
 @RestController
@@ -25,8 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookRestController {
     private final BookService bookService;
-
-    private final CommentService commentService;
 
     @GetMapping({ "/{id}", "/{id}/" })
     public BookDto getBookById(@PathVariable("id") Long id) {
