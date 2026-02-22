@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:maindb
+
+  application:
+    name: hw10
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data.sql
+      schema-locations: classpath:schema.sql
+
+  jpa:
+    show-sql: true
+
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+        order_inserts: true
+
+server:
+  port: 8000

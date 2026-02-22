@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${id == 0 ? 'Создание книги' : 'Редактирование книги'}">
+        Книга
+    </title>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #fafafa;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        select[multiple] {
+            height: 120px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        button {
+            padding: 8px 14px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #222;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .delete-container {
+            margin-top: 16px;
+            text-align: right;
+        }
+    </style>
+
+    <script th:src="@{/js/book-edit.js}" defer></script>
+</head>
+<body th:data-book-id="${id}">
+
+<div class="container">
+    <h1 th:text="${id == 0 ? 'Создание книги' : 'Редактирование книги'}"></h1>
+
+    <form id="form">
+        <input type="hidden" name="id"/>
+
+        <label for="title">Название книги</label>
+        <input type="text"
+               id="title"
+               name="title"
+               required/>
+
+        <label for="author">Автор</label>
+        <select id="author" name="authorId" required>
+            <option value="" disabled>
+                -- выберите автора --
+            </option>
+<!--            <option th:each="author : ${authors}"-->
+<!--                    th:value="${author.id}"-->
+<!--                    th:text="${author.fullName}"-->
+<!--                    th:selected="${book.authorDto != null && author.id == book.authorDto.id}">-->
+<!--            </option>-->
+        </select>
+
+        <label for="genres">Жанры</label>
+        <select id="genres" name="genreIds" multiple>
+<!--            <option th:each="genre : ${genres}"-->
+<!--                    th:value="${genre.id}"-->
+<!--                    th:text="${genre.name}"-->
+<!--                    th:selected="${book.genreDtos != null && book.genreDtos.contains(genre)}">-->
+<!--            </option>-->
+        </select>
+
+        <div class="actions">
+            <a th:href="@{/}" class="btn-secondary">← На главную</a>
+
+            <div class="buttons">
+                <button type="button" class="btn-primary" id="btn-save">
+                    Сохранить
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div th:if="${id != 0}" class="delete-container">
+        <button class="btn-danger" id="btn-delete">
+            Удалить книгу
+        </button>
+    </div>
+
+</div>
+
+</body>
+</html>
