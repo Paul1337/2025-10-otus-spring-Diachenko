@@ -1,5 +1,6 @@
 package ru.otus.hw.hw11.repositories;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,17 +9,29 @@ import org.springframework.context.annotation.Import;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import ru.otus.hw.hw11.MongoDataInitializer;
+import ru.otus.hw.hw11.ObjectMapperConfig;
+import ru.otus.hw.hw11.TestMongoDataInitializer;
 import ru.otus.hw.hw11.models.Author;
 import ru.otus.hw.hw11.repositories.AuthorRepository;
+
+import java.io.IOException;
 import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Mongo для работы с авторами")
 @DataMongoTest
-@Import({ MongoDataInitializer.class })
+@Import({ TestMongoDataInitializer.class })
 public class MongoAuthorRepositoryTest {
     @Autowired
     private AuthorRepository repository;
+
+    @Autowired
+    private TestMongoDataInitializer initializer;
+
+    @BeforeEach
+    void setup() {
+        initializer.init().block();
+    }
 
     private static final int AUTHORS_COUNT = 3;
 

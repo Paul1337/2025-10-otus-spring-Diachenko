@@ -28,18 +28,22 @@ public class MongoDataInitializer {
     private final ObjectMapper objectMapper;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void init() throws Exception {
-
-        JsonNode root = readJson();
-
-        insertAuthors(root)
-                .then(insertGenres(root))
-                .then(insertBooks(root))
-                .then(insertComments(root))
-                .doOnError(e -> System.err.println("Mongo init error: " + e.getMessage()))
+    public void initOnAppReady() {
+        init().doOnError(e -> System.err.println("Mongo init error: " + e.getMessage()))
                 .subscribe();
     }
 
+    private Mono<Void> init() {
+        try {
+            JsonNode root = readJson();
+            return insertAuthors(root)
+                    .then(insertGenres(root))
+                    .then(insertBooks(root))
+                    .then(insertComments(root));
+        } catch (IOException e) {
+            return Mono.error(e);
+        }
+    }
     private JsonNode readJson() throws IOException {
         try (InputStream is =
                      new ClassPathResource("data-mongodb.json").getInputStream()) {

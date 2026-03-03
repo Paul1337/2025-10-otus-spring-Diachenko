@@ -6,7 +6,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import ru.otus.hw.hw11.controllers.AuthorController;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @WebFluxTest(AuthorController.class)
 public class AuthorControllerTest {

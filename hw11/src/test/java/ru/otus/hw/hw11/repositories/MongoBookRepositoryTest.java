@@ -1,5 +1,6 @@
 package ru.otus.hw.hw11.repositories;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,13 +10,17 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import reactor.test.StepVerifier;
 import ru.otus.hw.hw11.MongoDataInitializer;
+import ru.otus.hw.hw11.ObjectMapperConfig;
+import ru.otus.hw.hw11.TestMongoDataInitializer;
 import ru.otus.hw.hw11.models.Author;
 import ru.otus.hw.hw11.models.Book;
 import ru.otus.hw.hw11.models.Genre;
 import ru.otus.hw.hw11.repositories.BookRepository;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -23,12 +28,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Mongo для работы с книгами")
 @DataMongoTest
-@Import({ MongoDataInitializer.class })
+@Import({ TestMongoDataInitializer.class })
 class MongoBookRepositoryTest {
     @Autowired
     private BookRepository repository;
 
     private static final int BOOKS_COUNT = 3;
+
+    @Autowired
+    private TestMongoDataInitializer initializer;
+
+    @BeforeEach
+    void setup() {
+        initializer.init().block();
+    }
 
     @DisplayName("должен загружать книгу по id")
     @ParameterizedTest
@@ -54,6 +67,7 @@ class MongoBookRepositoryTest {
 
     @DisplayName("должен сохранять новую книгу")
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void shouldSaveNewBook() {
         Book newBook = new Book(
                 null,
@@ -77,8 +91,10 @@ class MongoBookRepositoryTest {
 
     @DisplayName("должен сохранять измененную книгу")
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void shouldSaveUpdatedBook() {
-        StepVerifier.create(repository.findById("b1")
+        StepVerifier.create(
+                repository.findById("b1")
                         .flatMap(book -> {
                             book.setTitle("UpdatedTitle");
                             return repository.save(book);
@@ -92,6 +108,7 @@ class MongoBookRepositoryTest {
 
     @DisplayName("должен удалять книгу по id")
     @ParameterizedTest
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @ValueSource(strings = {"b1", "b2", "b3"})
     void shouldDeleteBook(String bookId) {
         StepVerifier.create(repository.deleteById(bookId))
