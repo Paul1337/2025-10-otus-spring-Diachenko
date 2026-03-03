@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import ru.otus.hw.hw11.dto.GenreDto;
-import ru.otus.hw.hw11.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw11.mappers.GenreMapper;
 import ru.otus.hw.hw11.repositories.GenreRepository;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service

@@ -18,7 +18,6 @@ import ru.otus.hw.hw11.dto.BookDto;
 import ru.otus.hw.hw11.dto.CreateBookDto;
 import ru.otus.hw.hw11.dto.UpdateBookDto;
 import ru.otus.hw.hw11.services.BookService;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")

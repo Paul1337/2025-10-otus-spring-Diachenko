@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.bson.Document;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -18,7 +16,6 @@ import ru.otus.hw.hw11.models.Author;
 import ru.otus.hw.hw11.models.Book;
 import ru.otus.hw.hw11.models.Comment;
 import ru.otus.hw.hw11.models.Genre;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -53,7 +50,9 @@ public class MongoDataInitializer {
     private Mono<Void> insertAuthors(JsonNode root) {
         return mongoTemplate.count(new Query(), Author.class)
                 .flatMap(count -> {
-                    if (count > 0) return Mono.empty();
+                    if (count > 0) {
+                        return Mono.empty();
+                    }
 
                     List<Author> authors = objectMapper.convertValue(
                             root.get("authors"),
@@ -67,7 +66,9 @@ public class MongoDataInitializer {
     private Mono<Void> insertGenres(JsonNode root) {
         return mongoTemplate.count(new Query(), Genre.class)
                 .flatMap(count -> {
-                    if (count > 0) return Mono.empty();
+                    if (count > 0) {
+                        return Mono.empty();
+                    }
 
                     List<Genre> genres = objectMapper.convertValue(
                             root.get("genres"),
@@ -81,7 +82,9 @@ public class MongoDataInitializer {
     private Mono<Void> insertBooks(JsonNode root) {
         return mongoTemplate.count(new Query(), Book.class)
                 .flatMap(count -> {
-                    if (count > 0) return Mono.empty();
+                    if (count > 0) {
+                        return Mono.empty();
+                    }
 
                     List<Book> books = objectMapper.convertValue(
                             root.get("books"),
@@ -95,13 +98,14 @@ public class MongoDataInitializer {
     private Mono<Void> insertComments(JsonNode root) {
         return mongoTemplate.count(new Query(), Comment.class)
                 .flatMap(count -> {
-                    if (count > 0) return Mono.empty();
+                    if (count > 0) {
+                        return Mono.empty();
+                    }
 
                     JsonNode commentsNode = root.get("comments");
 
                     return Flux.fromIterable(commentsNode)
                             .flatMap(node -> {
-
                                 String id = node.get("id").asText();
                                 String text = node.get("text").asText();
                                 String bookId = node.get("bookId").asText();
