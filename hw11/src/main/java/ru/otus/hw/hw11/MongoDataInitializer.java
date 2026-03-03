@@ -44,6 +44,7 @@ public class MongoDataInitializer {
             return Mono.error(e);
         }
     }
+
     private JsonNode readJson() throws IOException {
         try (InputStream is =
                      new ClassPathResource("data-mongodb.json").getInputStream()) {
