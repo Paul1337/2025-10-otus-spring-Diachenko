@@ -1,4 +1,4 @@
-package ru.otus.hw.hw10;
+package ru.otus.hw.hw11;
 
 import ru.otus.hw.hw11.dto.AuthorDto;
 import ru.otus.hw.hw11.dto.BookDto;
@@ -11,19 +11,19 @@ import java.util.stream.IntStream;
 public class TestDb {
     public static List<AuthorDto> getDbAuthors() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new AuthorDto(id, "Author_" + id))
+                .map(id -> new AuthorDto("a" + id, "Author_" + id))
                 .toList();
     }
 
     public static List<GenreDto> getDbGenres() {
         return IntStream.range(1, 7).boxed()
-                .map(id -> new GenreDto(id, "Genre_" + id))
+                .map(id -> new GenreDto("g" + id, "Genre_" + id))
                 .toList();
     }
 
     public static List<BookDto> getDbBooks(List<AuthorDto> dbAuthors, List<GenreDto> dbGenres) {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new BookDto(id,
+                .map(id -> new BookDto("b" + id,
                         "BookTitle_" + id,
                         dbAuthors.get(id - 1),
                         dbGenres.subList((id - 1) * 2, (id - 1) * 2 + 2)
@@ -39,7 +39,7 @@ public class TestDb {
 
     public static List<CommentDto> getDbComments() {
         return IntStream.range(1, 4).boxed()
-                .map(id -> new CommentDto(id,
+                .map(id -> new CommentDto("c" + id,
                         "Comment_" + id
                 ))
                 .toList();

@@ -2,11 +2,12 @@ package ru.otus.hw.hw11.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import ru.otus.hw.hw11.dto.GenreDto;
+import ru.otus.hw.hw11.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw11.mappers.GenreMapper;
 import ru.otus.hw.hw11.repositories.GenreRepository;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -16,8 +17,9 @@ public class GenreServiceImpl implements GenreService {
     private final GenreMapper genreMapper;
 
     @Override
-    public List<GenreDto> findAll() {
-        var genres = genreRepository.findAll();
-        return genres.stream().map(genreMapper::genreToDto).collect(Collectors.toList());
+    public Flux<GenreDto> findAll() {
+        return genreRepository.findAll()
+                .map(genreMapper::genreToDto);
     }
+
 }

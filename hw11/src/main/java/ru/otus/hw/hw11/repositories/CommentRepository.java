@@ -1,9 +1,9 @@
 package ru.otus.hw.hw11.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
 import ru.otus.hw.hw11.models.Comment;
-import java.util.List;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByBookId(long bookId);
+public interface CommentRepository extends ReactiveCrudRepository<Comment, String> {
+    Flux<Comment> findByBookId(String bookId);
 }

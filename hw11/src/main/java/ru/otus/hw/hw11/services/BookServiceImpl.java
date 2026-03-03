@@ -2,96 +2,118 @@ package ru.otus.hw.hw11.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.otus.hw.hw11.dto.AuthorDto;
 import ru.otus.hw.hw11.dto.BookDto;
 import ru.otus.hw.hw11.dto.CreateBookDto;
+import ru.otus.hw.hw11.dto.GenreDto;
 import ru.otus.hw.hw11.dto.UpdateBookDto;
 import ru.otus.hw.hw11.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw11.mappers.BookMapper;
+import ru.otus.hw.hw11.mappers.GenreMapper;
 import ru.otus.hw.hw11.models.Author;
 import ru.otus.hw.hw11.models.Book;
 import ru.otus.hw.hw11.models.Genre;
 import ru.otus.hw.hw11.repositories.AuthorRepository;
 import ru.otus.hw.hw11.repositories.BookRepository;
 import ru.otus.hw.hw11.repositories.GenreRepository;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 @RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
+//    private final AuthorService authorService;
+
+//    private final GenreService genreService;
+
+    private final BookRepository bookRepository;
+
     private final AuthorRepository authorRepository;
 
     private final GenreRepository genreRepository;
 
-    private final BookRepository bookRepository;
-
     private final BookMapper bookMapper;
 
-    @Transactional(readOnly = true)
+    private final GenreMapper genreMapper;
+
     @Override
-    public BookDto findById(long id) {
-        var book = bookRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Книга с id = %d не найдена!".formatted(id))
-        );
-        return bookMapper.bookToDto(book);
+    public Mono<BookDto> findById(String id) {
+        return bookRepository.findById(id)
+                .switchIfEmpty(Mono.error(
+                        new EntityNotFoundException("Book with id %s not found".formatted(id))
+                ))
+                .map(bookMapper::bookToDto);
     }
 
-    @Transactional(readOnly = true)
     @Override
-    public List<BookDto> findAll() {
-        var books = bookRepository.findAll();
-        return books.stream().map(bookMapper::bookToDto).collect(Collectors.toList());
+    public Flux<BookDto> findAll() {
+        return bookRepository.findAll()
+                .map(bookMapper::bookToDto);
     }
 
-    @Transactional
     @Override
-    public BookDto insert(CreateBookDto dto) {
-        var author = findAuthorById(dto.getAuthorId());
-        var genres = findGenresByIds(dto.getGenreIds());
-        var newBook = new Book(0, dto.getTitle(), author, genres);
-        var savedBook = bookRepository.save(newBook);
-        return bookMapper.bookToDto(savedBook);
+    public Mono<BookDto> insert(CreateBookDto dto) {
+        var authorMono = authorRepository.findById(dto.getAuthorId());
+        var genresMono = findGenresByIds(dto.getGenreIds());
+
+        return Mono.zip(authorMono, genresMono)
+                .flatMap(tuple -> {
+                    Author author = tuple.getT1();
+                    Set<Genre> genres = tuple.getT2();
+
+                    Book book = new Book(
+                            null,
+                            dto.getTitle(),
+                            author,
+                            genres
+                    );
+
+                    return bookRepository.save(book);
+                })
+                .map(bookMapper::bookToDto);
     }
 
-    @Transactional
     @Override
-    public BookDto update(UpdateBookDto dto) {
-        var book = findBookById(dto.getId());
-        var author = findAuthorById(dto.getAuthorId());
-        var genres = findGenresByIds(dto.getGenreIds());
+    public Mono<BookDto> update(UpdateBookDto dto) {
+        var bookMono = bookRepository.findById(dto.getId());
+        var authorMono = authorRepository.findById(dto.getAuthorId());
+        var genresMono = findGenresByIds(dto.getGenreIds());
 
-        book.setTitle(dto.getTitle());
-        book.setAuthor(author);
-        book.setGenres(genres);
+        return Mono.zip(bookMono, authorMono, genresMono)
+                        .flatMap(tuple -> {
+                            var book = tuple.getT1();
+                            book.setTitle(dto.getTitle());
+                            book.setAuthor(tuple.getT2());
+                            book.setGenres(tuple.getT3());
 
-        var savedBook = bookRepository.save(book);
-        return bookMapper.bookToDto(savedBook);
+                            return bookRepository.save(book);
+                        })
+                .map(bookMapper::bookToDto);
     }
 
-    @Transactional
     @Override
-    public void deleteById(long id) {
-        bookRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return bookRepository.deleteById(id);
     }
 
-    private Author findAuthorById(long id) {
-        return authorRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Author with id %d not found".formatted(id)));
+    private Mono<Set<Genre>> findGenresByIds(Set<String> ids) {
+        return genreRepository.findAllById(ids)
+                .collect(Collectors.toSet())
+                .flatMap(genres -> {
+                    if (genres.isEmpty() || genres.size() != ids.size()) {
+                        return Mono.error(new EntityNotFoundException(
+                                "One or all genres with ids %s not found".formatted(ids)
+                        ));
+                    }
+                    return Mono.just(genres);
+                });
     }
 
-    private Book findBookById(long id) {
-        return bookRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Book with id %d not found".formatted(id)));
-    }
 
-    private List<Genre> findGenresByIds(Set<Long> ids) {
-        var genres = genreRepository.findAllById(ids);
-        if (isEmpty(genres) || ids.size() != genres.size()) {
-            throw new EntityNotFoundException("One or all genres with ids %s not found".formatted(ids));
-        }
-        return genres;
-    }
 }

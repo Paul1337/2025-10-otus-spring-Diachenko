@@ -17,7 +17,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String book(@PathVariable long id, Model model) {
+    public String book(@PathVariable String id, Model model) {
         model.addAttribute("id", id);
         return "books/book";
     }
@@ -29,7 +29,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable long id, Model model) {
+    public String editForm(@PathVariable String id, Model model) {
         model.addAttribute("id", id);
         return "books/edit";
     }

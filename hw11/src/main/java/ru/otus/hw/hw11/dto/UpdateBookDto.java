@@ -11,18 +11,18 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateBookDto {
-    private Long id;
+    private String id;
 
     @NotEmpty
     private String title;
 
     @NotNull
-    private Long authorId;
+    private String authorId;
 
     @NotEmpty
-    private Set<Long> genreIds;
+    private Set<String> genreIds;
 
-    public UpdateBookDto(String title, Long authorId, Set<Long> genreIds) {
+    public UpdateBookDto(String title, String authorId, Set<String> genreIds) {
         this.title = title;
         this.authorId = authorId;
         this.genreIds = genreIds;

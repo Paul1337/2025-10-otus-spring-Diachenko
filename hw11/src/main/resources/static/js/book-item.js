@@ -32,7 +32,7 @@ const addNewComment = (comment) => {
     commentsState.push(comment);
 }
 
-const bookId = Number(document.body.dataset.bookId);
+const bookId = document.body.dataset.bookId;
 
 fetch(`/api/books/${bookId}`)
   .then(response => {

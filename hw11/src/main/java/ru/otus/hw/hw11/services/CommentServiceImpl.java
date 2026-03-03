@@ -2,16 +2,14 @@ package ru.otus.hw.hw11.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.hw11.dto.CommentDto;
 import ru.otus.hw.hw11.exceptions.EntityNotFoundException;
 import ru.otus.hw.hw11.mappers.CommentMapper;
 import ru.otus.hw.hw11.models.Comment;
 import ru.otus.hw.hw11.repositories.BookRepository;
 import ru.otus.hw.hw11.repositories.CommentRepository;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,44 +21,61 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
-    public List<CommentDto> findAllByBookId(long bookId) {
-        if (!bookRepository.existsById(bookId)) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
-        }
-        var comments = commentRepository.findByBookId(bookId);
-        return comments.stream().map(commentMapper::commentToDto).collect(Collectors.toList());
+    public Flux<CommentDto> findAllByBookId(String bookId) {
+        return bookRepository.existsById(bookId)
+                .flatMapMany(exists -> {
+                    if (!exists) {
+                        return Flux.error(
+                                new EntityNotFoundException("Book with id %s not found".formatted(bookId))
+                        );
+                    }
+
+                    return commentRepository
+                            .findByBookId(bookId)
+                            .map(commentMapper::commentToDto);
+                });
     }
 
     @Override
-    public Optional<CommentDto> findById(long id) {
-        var comment = commentRepository.findById(id);
-        return comment.map(commentMapper::commentToDto);
+    public Mono<CommentDto> findById(String id) {
+        return commentRepository.findById(id)
+                .switchIfEmpty(Mono.error(
+                        new EntityNotFoundException("Comment with id %s not found".formatted(id))
+                ))
+                .map(commentMapper::commentToDto);
     }
 
     @Override
-    @Transactional
-    public CommentDto create(String text, long bookId) {
-        var book = bookRepository.findById(bookId).orElseThrow(() ->
-                new EntityNotFoundException("Book with id %d not found".formatted(bookId)));
-        var comment = new Comment(0, text, book);
-        var savedComment = commentRepository.save(comment);
-        return commentMapper.commentToDto(savedComment);
+    public Mono<CommentDto> create(String text, String bookId) {
+        return bookRepository.findById(bookId)
+                .switchIfEmpty(Mono.error(
+                        new EntityNotFoundException("Book with id %s not found".formatted(bookId))
+                ))
+                .flatMap(book -> {
+                    Comment comment = new Comment();
+                    comment.setText(text);
+                    comment.setBookId(book.getId());
+                    return commentRepository.save(comment);
+                })
+                .map(commentMapper::commentToDto);
     }
 
     @Override
-    @Transactional
-    public CommentDto update(long id, String text) {
-        var comment = commentRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Comment with id %d not found".formatted(id)));
-        comment.setText(text);
-        commentRepository.save(comment);
-        return commentMapper.commentToDto(comment);
+    public Mono<CommentDto> update(String id, String text) {
+        return commentRepository.findById(id)
+                .switchIfEmpty(Mono.error(
+                        new EntityNotFoundException("Comment with id %s not found".formatted(id))
+                ))
+                .flatMap(comment -> {
+                    comment.setText(text);
+                    return commentRepository.save(comment);
+                })
+                .map(commentMapper::commentToDto);
     }
 
     @Override
-    @Transactional
-    public void deleteById(long id) {
-        commentRepository.deleteById(id);
+    public Mono<Void> deleteById(String id) {
+        return commentRepository.deleteById(id);
     }
 
 }

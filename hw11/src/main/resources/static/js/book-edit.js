@@ -6,7 +6,7 @@ const titleEl = form.querySelector('input[name="title"]');
 const authorEl = form.querySelector('select[name="authorId"]');
 const genresEl = form.querySelector('select[name="genreIds"]');
 
-const bookId = Number(document.body.dataset.bookId);
+const bookId = document.body.dataset.bookId;
 const Mode = {
     Create: 'create',
     Edit: 'edit'
@@ -128,8 +128,8 @@ btnSave.addEventListener('click', () => {
     const data = {
         id: bookId != 0 ? bookId : undefined,
         title: titleEl.value,
-        authorId: Number(authorEl.value),
-        genreIds: Array.from(genresEl.selectedOptions).map(option => Number(option.value))
+        authorId: authorEl.value,
+        genreIds: Array.from(genresEl.selectedOptions).map(option => option.value)
     };
 
     const url = mode === Mode.Create ? '/api/books' : `/api/books/${bookId}`;

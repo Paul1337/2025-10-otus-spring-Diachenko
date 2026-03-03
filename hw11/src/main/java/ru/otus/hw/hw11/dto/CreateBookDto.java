@@ -16,8 +16,8 @@ public class CreateBookDto {
     private String title;
 
     @NotNull
-    private Long authorId;
+    private String authorId;
 
     @NotEmpty
-    private Set<Long> genreIds;
+    private Set<String> genreIds;
 }

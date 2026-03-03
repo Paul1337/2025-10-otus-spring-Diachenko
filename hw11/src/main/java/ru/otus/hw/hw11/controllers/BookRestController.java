@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.otus.hw.hw11.dto.BookDto;
 import ru.otus.hw.hw11.dto.CreateBookDto;
 import ru.otus.hw.hw11.dto.UpdateBookDto;
@@ -25,30 +27,30 @@ public class BookRestController {
     private final BookService bookService;
 
     @GetMapping({ "/{id}", "/{id}/" })
-    public BookDto getBookById(@PathVariable("id") Long id) {
+    public Mono<BookDto> getBookById(@PathVariable("id") String id) {
         return bookService.findById(id);
     }
 
     @GetMapping({ "", "/" })
-    public List<BookDto> getAll() {
+    public Flux<BookDto> getAll() {
         return bookService.findAll();
     }
 
     @PostMapping({ "", "/" })
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto createBook(@Valid @RequestBody CreateBookDto dto) {
+    public Mono<BookDto> createBook(@Valid @RequestBody CreateBookDto dto) {
         return bookService.insert(dto);
     }
 
     @PutMapping({ "/{id}", "/{id}/" })
-    public BookDto editBook(@Valid @RequestBody UpdateBookDto dto, @PathVariable("id") Long id) {
+    public Mono<BookDto> editBook(@Valid @RequestBody UpdateBookDto dto, @PathVariable("id") String id) {
         dto.setId(id);
         return bookService.update(dto);
     }
 
     @DeleteMapping({ "/{id}", "/{id}/" })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteBook(@PathVariable long id) {
-        bookService.deleteById(id);
+    public Mono<Void> deleteBook(@PathVariable String id) {
+        return bookService.deleteById(id);
     }
 }
