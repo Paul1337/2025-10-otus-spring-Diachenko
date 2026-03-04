@@ -55,6 +55,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto handleException(Exception ex) {
         log.error("", ex);
-        return new ErrorDto(ErrorType.INTERNAL_ERROR);
+        return new ErrorDto(ErrorType.INTERNAL_ERROR, "Something went wrong");
     }
 }
