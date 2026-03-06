@@ -3,20 +3,35 @@ package ru.otus.hw.hw12.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.hw12.config.SecurityConfiguration;
 import ru.otus.hw.hw12.controllers.AuthorController;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(AuthorController.class)
+@Import(SecurityConfiguration.class)
 public class AuthorControllerTest {
     @Autowired
     private MockMvc mvc;
 
     @Test
+    @WithMockUser
     void shouldRenderListPageWithCorrectViewAndModelAttributes() throws Exception {
         mvc.perform(get("/authors"))
+                .andExpect(status().isOk())
                 .andExpect(view().name("authors"));
+    }
+
+    @Test
+    void shouldRedirectToLoginWhenNotAuthenticated() throws Exception {
+        mvc.perform(get("/authors"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("**/login**"));
     }
 }

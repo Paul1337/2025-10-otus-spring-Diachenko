@@ -3,12 +3,17 @@ package ru.otus.hw.hw12.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.otus.hw.hw12.config.SecurityConfiguration;
 import ru.otus.hw.hw12.controllers.BookRestController;
 import ru.otus.hw.hw12.dto.AuthorDto;
 import ru.otus.hw.hw12.dto.BookDto;
@@ -31,12 +36,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.otus.hw.hw12.TestDb.getDbAuthors;
 import static ru.otus.hw.hw12.TestDb.getDbBooks;
 import static ru.otus.hw.hw12.TestDb.getDbGenres;
 
 @WebMvcTest(BookRestController.class)
+@Import(SecurityConfiguration.class)
 public class BookRestControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -64,6 +71,7 @@ public class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldCorrectlyCreateBook() throws Exception {
         var requestDto = new CreateBookDto("new-book", 1L, Set.of(1L, 2L));
 
@@ -80,7 +88,7 @@ public class BookRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().json(
                         objectMapper.writeValueAsString(returnedBook)
                 ));
@@ -89,6 +97,7 @@ public class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldCorrectlyUpdateBook() throws Exception {
         var bookId = 10L;
 
@@ -130,16 +139,37 @@ public class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser
     void shouldCorrectlyDeleteBook() throws Exception {
         long bookId = 2L;
 
         mvc.perform(delete("/api/books/{id}", bookId))
-                .andExpect(status().isOk())
+                .andExpect(status().isNoContent())
                 .andExpect(content().string(""));
 
         verify(bookService).deleteById(bookId);
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = { "/api/books" })
+    void shouldBeUnauthorizedErrorWhenDoingGetNotAuthenticated(String uri) throws Exception {
+        mvc.perform(get(uri))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "/api/books" })
+    void shouldBeUnauthorizedErrorWhenDoingPostNotAuthenticated(String uri) throws Exception {
+        mvc.perform(post(uri))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "/api/books/1" })
+    void shouldBeUnauthorizedErrorWhenDoingDeleteNotAuthenticated(String uri) throws Exception {
+        mvc.perform(delete(uri))
+                .andExpect(status().isUnauthorized());
+    }
 
 
 }

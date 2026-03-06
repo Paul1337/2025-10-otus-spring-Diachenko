@@ -8,12 +8,6 @@ import ru.otus.hw.hw12.exceptions.EntityNotFoundException;
 @RestController
 @RequestMapping("/test")
 class TestExceptionController {
-
-    @GetMapping("/not-found")
-    public void notFound() {
-        throw new EntityNotFoundException("Entity not found");
-    }
-
     @GetMapping("/error")
     public void error() {
         throw new RuntimeException("Error");
