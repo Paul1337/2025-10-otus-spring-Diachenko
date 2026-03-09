@@ -1,39 +1,37 @@
-package ru.otus.hw.hw12.controller;
+package ru.otus.hw.hw12.controller.author;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.hw12.config.SecurityConfiguration;
-import ru.otus.hw.hw12.controllers.GenreController;
+import ru.otus.hw.hw12.controllers.AuthorController;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-@WebMvcTest(GenreController.class)
+@WebMvcTest(AuthorController.class)
 @Import(SecurityConfiguration.class)
-public class GenreControllerTest {
+public class AuthorControllerSecurityTest {
     @Autowired
     private MockMvc mvc;
 
     @Test
     @WithMockUser
-    void shouldRenderListPageWithCorrectViewAndModelAttributes() throws Exception {
-        mvc.perform(get("/genres"))
-                .andExpect(view().name("genres"));
+    void shouldAllowListAuthorsWhenAuthenticated() throws Exception {
+        mvc.perform(get("/authors"))
+                .andExpect(status().isOk());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "/genres" })
-    void shouldRedirectToLoginWhenNotAuthenticated(String uri) throws Exception {
-        mvc.perform(get(uri))
+    @Test
+    void shouldDenyListAuthorsWhenNotAuthenticated() throws Exception {
+        mvc.perform(get("/authors"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/login**"));
     }
+
 }
