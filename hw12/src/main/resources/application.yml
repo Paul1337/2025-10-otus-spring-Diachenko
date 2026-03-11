@@ -23,5 +23,12 @@ spring:
           batch_size: 10
         order_inserts: true
 
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+
 server:
   port: 8000
