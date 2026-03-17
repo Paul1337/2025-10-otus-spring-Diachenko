@@ -28,7 +28,10 @@ logging:
     org:
       springframework:
         security: DEBUG
-
+app:
+  init-users:
+    enabled: true
 
 server:
   port: 8000
+

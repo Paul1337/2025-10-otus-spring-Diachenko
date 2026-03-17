@@ -102,7 +102,7 @@
 
     <script th:src="@{/js/book-edit.js}" defer></script>
 </head>
-<body th:data-book-id="${id}" th:data-user-role="${#authentication.authorities[0].authority}">
+<body th:data-book-id="${id}" th:data-user-role="${#authentication != null ? #authentication.authorities[0].authority : 'ROLE_ANONYMOUS'}">
 
 <div class="container">
     <h1 th:text="${id == 0 ? 'Создание книги' : 'Редактирование книги'}"></h1>

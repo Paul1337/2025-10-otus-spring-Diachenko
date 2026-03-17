@@ -10,13 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Getter
 @Table(name = "comments")
@@ -38,4 +36,10 @@ public class Comment {
     @JoinColumn(name = "owner_id")
     private User owner;
 
+    public Comment(String text, Book book, User owner) {
+        this.id = 0;
+        this.text = text;
+        this.book = book;
+        this.owner = owner;
+    }
 }

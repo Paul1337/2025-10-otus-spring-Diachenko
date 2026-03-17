@@ -1,4 +1,4 @@
-package ru.otus.hw.hw13;
+package ru.otus.hw.hw13.utils;
 
 import ru.otus.hw.hw13.dto.AuthorDto;
 import ru.otus.hw.hw13.dto.BookDto;

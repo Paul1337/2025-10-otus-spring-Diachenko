@@ -2,7 +2,7 @@ package ru.otus.hw.hw13.services.comment;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.hw.hw13.models.Book;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.hw13.models.Comment;
 import ru.otus.hw.hw13.repositories.CommentRepository;
 
@@ -11,6 +11,7 @@ import ru.otus.hw.hw13.repositories.CommentRepository;
 public class CommentSecurityService {
     private final CommentRepository commentRepository;
 
+    @Transactional
     public boolean isCommentAuthor(Long commentId, Long userId) {
         Comment comment = commentRepository.findById(commentId).orElseThrow();
         

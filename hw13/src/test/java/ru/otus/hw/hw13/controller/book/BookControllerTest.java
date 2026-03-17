@@ -15,10 +15,10 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import static ru.otus.hw.hw13.TestDb.getDbAuthors;
-import static ru.otus.hw.hw13.TestDb.getDbBooks;
-import static ru.otus.hw.hw13.TestDb.getDbComments;
-import static ru.otus.hw.hw13.TestDb.getDbGenres;
+import static ru.otus.hw.hw13.utils.TestDb.getDbAuthors;
+import static ru.otus.hw.hw13.utils.TestDb.getDbBooks;
+import static ru.otus.hw.hw13.utils.TestDb.getDbComments;
+import static ru.otus.hw.hw13.utils.TestDb.getDbGenres;
 
 @WebMvcTest(BookController.class)
 @AutoConfigureMockMvc(addFilters = false)

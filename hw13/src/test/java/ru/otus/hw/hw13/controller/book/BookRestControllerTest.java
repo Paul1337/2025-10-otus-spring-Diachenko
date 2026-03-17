@@ -33,9 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.otus.hw.hw13.TestDb.getDbAuthors;
-import static ru.otus.hw.hw13.TestDb.getDbBooks;
-import static ru.otus.hw.hw13.TestDb.getDbGenres;
+import static ru.otus.hw.hw13.utils.TestDb.getDbAuthors;
+import static ru.otus.hw.hw13.utils.TestDb.getDbBooks;
+import static ru.otus.hw.hw13.utils.TestDb.getDbGenres;
 
 @WebMvcTest(BookRestController.class)
 @AutoConfigureMockMvc(addFilters = false)

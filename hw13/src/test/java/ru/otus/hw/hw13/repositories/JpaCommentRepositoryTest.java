@@ -10,8 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.otus.hw.hw13.models.Book;
 import ru.otus.hw.hw13.models.Comment;
-import ru.otus.hw.hw13.repositories.CommentRepository;
-
+import ru.otus.hw.hw13.models.User;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("репозиторий на основе jpa для работы с комментариями")
@@ -19,9 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JpaCommentRepositoryTest {
     @Autowired
     private TestEntityManager em;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private CommentRepository repository;
@@ -37,7 +33,7 @@ public class JpaCommentRepositoryTest {
                 .isPresent()
                 .get()
                 .usingRecursiveComparison()
-                .ignoringFields("book")
+                .ignoringFields("book", "owner")
                 .isEqualTo(expectedComment);
     }
 
@@ -60,7 +56,8 @@ public class JpaCommentRepositoryTest {
     void shouldSaveNewComment() {
         var book = em.find(Book.class, 1L);
         assertThat(book).isNotNull();
-        var expectedComment = new Comment(0, "TestComment", book);
+        var user = em.find(User.class, 1);
+        var expectedComment = new Comment("TestComment", book, user);
         var returnedComment = repository.save(expectedComment);
 
         assertThat(returnedComment).isNotNull()
@@ -83,7 +80,8 @@ public class JpaCommentRepositoryTest {
     void shouldSaveUpdatedComment() {
         var book = em.find(Book.class, 1L);
         assertThat(book).isNotNull();
-        var expectedComment = new Comment(1, "TestComment", book);
+        var user = em.find(User.class, 1);
+        var expectedComment = new Comment("TestComment", book, user);
         var returnedComment = repository.save(expectedComment);
 
         assertThat(returnedComment).isNotNull()

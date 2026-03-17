@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
         var owner = securityUtils.findCurrentUser();
 
-        var comment = new Comment(0, text, book, owner);
+        var comment = new Comment(text, book, owner);
         var savedComment = commentRepository.save(comment);
         return commentMapper.commentToDto(savedComment);
     }
@@ -71,7 +71,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or @commentSecurityService.isCommentAuthor(#id, authentication.principal.id)")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MODERATOR') or " +
+            "@commentSecurityService.isCommentAuthor(#id, authentication.principal.id)")
     public void deleteById(long id) {
         commentRepository.deleteById(id);
     }

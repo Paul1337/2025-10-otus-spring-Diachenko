@@ -1,7 +1,6 @@
 package ru.otus.hw.hw13.dto;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +18,10 @@ public class CreateBookDto {
 
     @NotEmpty
     private Set<Long> genreIds;
+
+    public CreateBookDto(String title, Set<Long> genreIds) {
+        this.title = title;
+        this.genreIds = genreIds;
+        this.authorId = null;
+    }
 }
