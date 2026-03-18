@@ -1,0 +1,53 @@
+create table genres (
+    id bigserial,
+    name varchar(255),
+    primary key (id)
+);
+
+create table roles (
+    id bigserial,
+    name varchar(255),
+    primary key (id),
+    unique (name)
+);
+
+create table users (
+    id bigserial,
+    username varchar(255),
+    password_hash varchar(1024),
+    first_name varchar(255),
+    last_name varchar(255),
+    role_id bigint references roles(id),
+    unique (username),
+    primary key (id)
+);
+
+create table authors (
+    id bigserial,
+    full_name varchar(255),
+    user_id bigint references users (id) on delete set null,
+    primary key (id),
+    unique (user_id)
+);
+
+create table books (
+    id bigserial,
+    title varchar(255),
+    author_id bigint references authors (id) on delete cascade,
+    primary key (id)
+);
+
+create table comments (
+    id bigserial,
+    text varchar(255),
+    primary key (id),
+    owner_id bigint references users (id) not null,
+    book_id bigint references books (id) on delete cascade
+);
+
+create table books_genres (
+    book_id bigint references books(id) on delete cascade,
+    genre_id bigint references genres(id) on delete cascade,
+    primary key (book_id, genre_id)
+);
+
